@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anime | Ellie Was AI Generated</title>
+  <meta name="description" content="Favorite anime page powered by a local JSON config and the Jikan API." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .anime-page { padding: 2rem 0 5rem; }
+    .anime-shell { max-width: 1360px; margin: 0 auto; }
+    .anime-hero-copy {
+      max-width: 820px;
+      margin: 0 0 1.75rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1.05rem;
+    }
+    .anime-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.1rem; }
+
+    .anime-card {
+      background: linear-gradient(180deg, rgba(172, 109, 27, 0.55), rgb(0,0,0,.40));
+      border: 1px solid rgb(0,0,0,0.25);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .anime-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 208, 169, 0.28);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+    }
+
+    .anime-card:hover .anime-title {
+      color: #ffd0a9;
+    }
+
+    .anime-cover {
+      position: relative;
+      aspect-ratio: 16 / 16;
+      width: 100%;
+      display: block;
+      overflow: hidden;
+      background: #111;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .anime-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 224, 193, 0.03), rgba(0, 0, 0, 0.18));
+      pointer-events: none;
+    }
+
+    .anime-cover img {
+      aspect-ratio: 16 / 16;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transform: translate3d(0, 0, 0) scale(1.08);
+      will-change: transform;
+    }
+
+    .anime-card-top {
+      padding: 1rem 1rem 0.3rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: start;
+    }
+
+    .anime-label {
+      color: #ffd0a9;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: "Righteous", system-ui, sans-serif;
+      margin-bottom: 0.35rem;
+    }
+
+    .anime-title { margin: 0; font-size: 1.35rem; line-height: 1.15; }
+
+    .anime-score {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: #ffd0a9;
+      font-family: "Righteous", system-ui, sans-serif;
+      font-size: 1rem;
+    }
+
+    .anime-copy {
+      padding: 0 1rem 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .anime-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      padding: 0 1rem 0.9rem;
+    }
+
+    .anime-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .anime-card-footer {
+      margin-top: auto;
+      padding: 0 1rem 1rem;
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .anime-note {
+      margin-top: 1.15rem;
+      padding: 1rem 1.05rem;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.025);
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .anime-note code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: rgba(255,255,255,0.06);
+      padding: 0.12rem 0.35rem;
+      border-radius: 6px;
+    }
+
+    .anime-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      margin: 0;
+      min-width: 120px;
+      height: 50px;
+      padding: 0.8rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #042d2c;
+      color: #ffffff;
+      font: inherit;
+      font-family: "Righteous", system-ui, sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, filter 0.18s ease, background 0.18s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .anime-button:hover {
+      text-decoration: none;
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .anime-button:focus-visible {
+      outline: 2px solid rgba(255, 208, 169, 0.5);
+      outline-offset: 2px;
+    }
+
+    .loading { opacity: 0.72; }
+    .error-text { color: #ffb6b6; }
+    .site-footer { padding: 1rem 0 2rem; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg">
+          <a href="index.html"></a>
+        </img>
+        <a class="brand" href="index.html">Ellie Was AI Generated</a>
+      </div>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="about.html">About</a>
+        <a href="music.html">Music</a>
+        <a href="code.html">Code</a>
+        <a href="https://homuraapp.elliewasaigenerated.workers.dev" target="_blank" rel="noopener noreferrer" data-homura-app-link>Homura</a>
+        <a class="active" href="anime.html">Anime</a>
+        <a href="notebook.html">Blog</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page shell anime-shell">
+    <section class="page-hero page-header" style="--hero-image: url('../img/anime-hdr.png'); --hero-position: center 25%;">
+      <div class="page-hero-parallax"></div>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <p class="eyebrow">Gems</p>
+        <h1>Anime</h1>
+      </div>
+    </section>
+
+    <section class="anime-page">
+      <section id="animeGrid" class="anime-grid"></section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>You are now entering the uncanny valley. Population: Ellie.</p>
+  </footer>
+
+  <script>
+    const JIKAN_API_BASE = "https://api.jikan.moe/v4";
+    const FAVORITES_URL = "assets/data/anime-favorites.json";
+    const animeGrid = document.getElementById("animeGrid");
+    const pageController = new AbortController();
+    const { signal } = pageController;
+    window.__ELLIE_PAGE_CLEANUP = () => pageController.abort();
+
+    let observer = null;
+    let queueTimer = null;
+    const QUEUE_DELAY_MS = 800;
+    const RETRYABLE_STATUS_CODES = new Set([408, 425, 429, 500, 502, 503, 504]);
+    const MAX_FETCH_RETRIES = 3;
+    const queuedIds = new Set();
+    const loadedIds = new Set();
+    const cardState = new Map();
+    const favoritesById = new Map();
+    const requestQueue = [];
+    const retryCounts = new Map();
+
+    function cardTemplate(item) {
+      const scoreText = item.personalScore != null ? String(item.personalScore) : "-";
+      return `
+        <article class="anime-card loading" data-id="${item.id}" data-state="queued">
+          <div class="anime-cover">
+            <img alt="" src="" />
+          </div>
+          <div class="anime-card-top">
+            <div>
+              <div class="anime-label">${item.label || "Favorite"}</div>
+              <h2 class="anime-title">Queued...</h2>
+            </div>
+            <div class="anime-score">${scoreText}</div>
+          </div>
+          <div class="anime-copy">${item.note || "This card will load when it scrolls into view."}</div>
+          <div class="anime-meta">
+            <span class="anime-chip">Waiting for viewport</span>
+          </div>
+          <div class="anime-card-footer">
+            <a class="anime-button" href="https://myanimelist.net/anime/${item.id}" target="_blank" rel="noopener noreferrer">Open MAL</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSkeletons(items) {
+      animeGrid.innerHTML = items.map(cardTemplate).join("");
+      setupCoverParallax(animeGrid);
+    }
+
+    async function loadFavorites() {
+      const response = await fetch(FAVORITES_URL, { signal });
+      if (!response.ok) throw new Error(`Could not load config: HTTP ${response.status}`);
+      const data = await response.json();
+      if (!Array.isArray(data.favorites)) throw new Error("Config file must contain a favorites array.");
+      return data.favorites;
+    }
+
+    function getRetryDelayMs(attempt, retryAfterHeader = "") {
+      const retryAfterSeconds = Number.parseFloat(retryAfterHeader);
+      if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+        return Math.ceil(retryAfterSeconds * 1000);
+      }
+
+      return QUEUE_DELAY_MS * Math.max(1, attempt + 1);
+    }
+
+    async function fetchAnime(id, attempt = 0) {
+      const response = await fetch(`${JIKAN_API_BASE}/anime/${id}/full`, { signal });
+      if (!response.ok) {
+        const error = new Error(`HTTP ${response.status}`);
+        error.status = response.status;
+        error.retryAfterMs = getRetryDelayMs(attempt, response.headers.get("retry-after"));
+
+        if (RETRYABLE_STATUS_CODES.has(response.status) && attempt < MAX_FETCH_RETRIES) {
+          await new Promise((resolve) => window.setTimeout(resolve, error.retryAfterMs));
+          return fetchAnime(id, attempt + 1);
+        }
+
+        throw error;
+      }
+
+      const payload = await response.json();
+      if (!payload?.data) throw new Error("Jikan response did not include anime data.");
+      return payload.data;
+    }
+
+    function getCard(id) {
+      return animeGrid.querySelector(`[data-id="${id}"]`);
+    }
+
+    function setupCoverParallax(root = animeGrid) {
+      root.querySelectorAll(".anime-card").forEach((card) => {
+        if (card.dataset.coverParallaxReady === "true") return;
+
+        const coverImage = card.querySelector(".anime-cover img");
+        if (!coverImage) return;
+
+        card.dataset.coverParallaxReady = "true";
+
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        let rafId = null;
+
+        function animate() {
+          currentX += (targetX - currentX) * 0.16;
+          currentY += (targetY - currentY) * 0.16;
+
+          coverImage.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.08)`;
+
+          const settled =
+            Math.abs(targetX - currentX) < 0.1 &&
+            Math.abs(targetY - currentY) < 0.1 &&
+            Math.abs(targetX) < 0.1 &&
+            Math.abs(targetY) < 0.1;
+
+          if (settled) {
+            rafId = null;
+            currentX = 0;
+            currentY = 0;
+            coverImage.style.transform = "translate3d(0, 0, 0) scale(1.08)";
+            return;
+          }
+
+          rafId = requestAnimationFrame(animate);
+        }
+
+        card.addEventListener("mousemove", (event) => {
+          const rect = card.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width;
+          const y = (event.clientY - rect.top) / rect.height;
+
+          targetX = (x - 0.5) * 12;
+          targetY = (y - 0.5) * 12;
+
+          if (!rafId) {
+            rafId = requestAnimationFrame(animate);
+          }
+        }, { signal });
+
+        card.addEventListener("mouseleave", () => {
+          targetX = 0;
+          targetY = 0;
+
+          if (!rafId) {
+            rafId = requestAnimationFrame(animate);
+          }
+        }, { signal });
+      });
+    }
+
+    function setCardQueued(item) {
+      const card = getCard(item.id);
+      if (!card) return;
+
+      card.dataset.state = "queued";
+      card.querySelector(".anime-title").textContent = "Queued...";
+      card.querySelector(".anime-copy").textContent = item.note || "This card will load when it scrolls into view.";
+      card.querySelector(".anime-meta").innerHTML = `<span class="anime-chip">Waiting for viewport</span>`;
+    }
+
+    function setCardLoading(item) {
+      const card = getCard(item.id);
+      if (!card) return;
+
+      card.dataset.state = "loading";
+      card.querySelector(".anime-title").textContent = "Loading...";
+      card.querySelector(".anime-copy").textContent = item.note || "Fetching details from Jikan...";
+      card.querySelector(".anime-meta").innerHTML = `<span class="anime-chip">Fetching from Jikan</span>`;
+    }
+
+    function setCardRetrying(item, retryCount, delayMs) {
+      const card = getCard(item.id);
+      if (!card) return;
+
+      card.dataset.state = "retrying";
+      card.querySelector(".anime-title").textContent = "Retrying...";
+      card.querySelector(".anime-copy").textContent = item.note || "Jikan asked us to slow down for a moment.";
+      card.querySelector(".anime-meta").innerHTML =
+        `<span class="anime-chip">Retry ${retryCount} in ${(delayMs / 1000).toFixed(delayMs >= 1000 ? 1 : 0)}s</span>`;
+    }
+
+    function updateCard(item, data) {
+      const card = getCard(item.id);
+      if (!card) return;
+
+      const img_par = card.querySelector(".anime-cover");
+      const img = img_par.querySelector("img");
+      const title = card.querySelector(".anime-title");
+      const copy = card.querySelector(".anime-copy");
+      const meta = card.querySelector(".anime-meta");
+      const link = card.querySelector(".anime-button");
+
+      title.textContent = data.title || "Untitled";
+      img.src =
+        data.images?.webp?.large_image_url ||
+        data.images?.jpg?.large_image_url ||
+        data.images?.webp?.image_url ||
+        data.images?.jpg?.image_url ||
+        "";
+      img.alt = data.title || "Anime cover";
+
+      const synopsis = (data.synopsis || "").trim();
+      copy.textContent = synopsis
+        ? synopsis.slice(0, 260) + (synopsis.length > 260 ? "..." : "")
+        : (item.note || "No synopsis available.");
+
+      const chips = [];
+      if (data.score) chips.push(`<span class="anime-chip">MAL ${Number(data.score).toFixed(2)}</span>`);
+      if (data.type) chips.push(`<span class="anime-chip">${String(data.type)}</span>`);
+      if (data.episodes) chips.push(`<span class="anime-chip">${data.episodes} eps</span>`);
+      if (Array.isArray(data.genres)) {
+        chips.push(...data.genres.slice(0, 3).map((genre) => `<span class="anime-chip">${genre.name}</span>`));
+      }
+
+      meta.innerHTML = chips.length ? chips.join("") : `<span class="anime-chip">No extra metadata</span>`;
+      link.href = `https://myanimelist.net/anime/${item.id}`;
+      card.classList.remove("loading");
+      card.dataset.state = "loaded";
+    }
+
+    function showError(item, error) {
+      const card = getCard(item.id);
+      if (!card) return;
+
+      card.classList.remove("loading");
+      card.dataset.state = "error";
+      card.querySelector(".anime-title").textContent = `Could not load MAL #${item.id}`;
+      card.querySelector(".anime-copy").innerHTML =
+        `<span class="error-text">Failed to load this title. ${error.message}</span>`;
+      card.querySelector(".anime-meta").innerHTML =
+        `<span class="anime-chip">Refreshing should fix it (hopefully).</span>`;
+      card.querySelector(".anime-button").href = `https://myanimelist.net/anime/${item.id}`;
+    }
+
+    async function processQueue() {
+      if (!requestQueue.length || signal.aborted) {
+        queueTimer = null;
+        return;
+      }
+
+      const nextId = requestQueue.shift();
+      queuedIds.delete(nextId);
+
+      if (loadedIds.has(nextId)) {
+        queueTimer = window.setTimeout(processQueue, QUEUE_DELAY_MS);
+        return;
+      }
+
+      const item = favoritesById.get(nextId);
+      if (!item) {
+        queueTimer = window.setTimeout(processQueue, QUEUE_DELAY_MS);
+        return;
+      }
+
+      cardState.set(item.id, "loading");
+      setCardLoading(item);
+
+      try {
+        const data = await fetchAnime(item.id);
+        loadedIds.add(item.id);
+        retryCounts.delete(item.id);
+        cardState.set(item.id, "loaded");
+        updateCard(item, data);
+      } catch (error) {
+        if (!signal.aborted) {
+          const retryCount = (retryCounts.get(item.id) || 0) + 1;
+          const delayMs = Number.isFinite(error.retryAfterMs) ? error.retryAfterMs : QUEUE_DELAY_MS * retryCount;
+
+          if (RETRYABLE_STATUS_CODES.has(error.status) && retryCount <= MAX_FETCH_RETRIES) {
+            retryCounts.set(item.id, retryCount);
+            cardState.set(item.id, "queued");
+            setCardRetrying(item, retryCount, delayMs);
+
+            window.setTimeout(() => {
+              if (!signal.aborted) {
+                enqueueCard(item);
+              }
+            }, delayMs);
+          } else {
+            console.error("Jikan fetch failed for", item.id, error);
+            retryCounts.delete(item.id);
+            cardState.set(item.id, "error");
+            showError(item, error);
+          }
+        }
+      }
+
+      queueTimer = window.setTimeout(processQueue, QUEUE_DELAY_MS);
+    }
+
+    function enqueueCard(item) {
+      if (!item || loadedIds.has(item.id) || queuedIds.has(item.id) || cardState.get(item.id) === "loading") {
+        return;
+      }
+
+      queuedIds.add(item.id);
+      requestQueue.push(item.id);
+
+      if (!queueTimer) {
+        processQueue();
+      }
+    }
+
+    function setupObserver(favorites) {
+      if (!("IntersectionObserver" in window)) {
+        favorites.forEach((item) => enqueueCard(item));
+        return;
+      }
+
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const id = Number(entry.target.getAttribute("data-id"));
+          const item = favoritesById.get(id);
+          enqueueCard(item);
+          observer.unobserve(entry.target);
+        });
+      }, {
+        rootMargin: "240px 0px",
+        threshold: 0.15,
+      });
+
+      favorites.forEach((item) => {
+        const card = getCard(item.id);
+        if (card) {
+          observer.observe(card);
+        }
+      });
+    }
+
+    async function boot() {
+      try {
+        const favorites = await loadFavorites();
+        favorites.forEach((item) => {
+          favoritesById.set(item.id, item);
+          cardState.set(item.id, "queued");
+        });
+
+        renderSkeletons(favorites);
+        favorites.forEach((item) => setCardQueued(item));
+        setupObserver(favorites);
+      } catch (error) {
+        animeGrid.innerHTML = `
+          <article class="anime-card">
+            <div class="anime-card-top">
+              <div>
+                <div class="anime-label">Config error</div>
+                <h2 class="anime-title">Could not load favorites JSON</h2>
+              </div>
+            </div>
+            <div class="anime-copy"><span class="error-text">${error.message}</span></div>
+          </article>
+        `;
+      }
+    }
+
+    signal.addEventListener("abort", () => {
+      if (observer) observer.disconnect();
+      if (queueTimer) {
+        window.clearTimeout(queueTimer);
+        queueTimer = null;
+      }
+    }, { once: true });
+
+    boot();
+  </script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

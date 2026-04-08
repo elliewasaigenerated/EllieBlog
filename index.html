@@ -1,0 +1,414 @@
+<!-- Vibe coded with ChatGPT -->
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ellie Was AI Generated</title>
+  <meta name="description" content="The Life and Times of Ellie Moore" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Righteous&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .hero {
+      overflow: hidden;
+    }
+
+    .status-float {
+      position: absolute;
+      right: clamp(1rem, 4vw, 2.4rem);
+      bottom: clamp(1rem, 4vw, 2rem);
+      z-index: 3;
+      width: min(360px, calc(100% - 2rem));
+      padding: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(18, 18, 18, 0.52), rgba(10, 10, 10, 0.3));
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .status-float[hidden] {
+      display: none;
+    }
+
+    .status-float__header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .status-float__title {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .status-float__tag {
+      color: #ffd0a9;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      font-family: "Righteous", system-ui, sans-serif;
+    }
+
+    .status-float__meta {
+      color: rgba(246, 242, 236, 0.72);
+      font-size: 0.92rem;
+      white-space: nowrap;
+    }
+
+    .status-float__list {
+      display: grid;
+      gap: 0.7rem;
+      max-height: 235px;
+      overflow-y: auto;
+      padding-right: 0.2rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 208, 169, 0.32) rgba(255, 255, 255, 0.04);
+    }
+
+    .status-float__list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .status-float__list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+    }
+
+    .status-float__list::-webkit-scrollbar-thumb {
+      background: rgba(255, 208, 169, 0.28);
+      border-radius: 999px;
+    }
+
+    .status-card {
+      padding: 0.8rem 0.85rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.035);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 208, 169, 0.28);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .status-card__text {
+      margin: 0;
+      color: var(--text);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .status-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.65rem;
+      color: rgba(246, 242, 236, 0.72);
+      font-size: 0.92rem;
+      flex-wrap: wrap;
+    }
+
+    .status-card__footer a {
+      color: #ffd0a9;
+    }
+
+    .status-card--loading,
+    .status-card--empty {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-content {
+        padding-bottom: 1.5rem;
+      }
+
+      .status-float {
+        position: static;
+        width: min(calc(100% - 2rem), 420px);
+        margin: 0 auto 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg">
+          <a href="index.html"></a>
+        </img>
+        <a class="brand" href="index.html">Ellie Was AI Generated</a>
+      </div>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      
+      <div class="nav-links" id="nav-links">
+        <a href="about.html">About</a>
+        <a href="music.html">Music</a>
+        <a href="code.html">Code</a>
+        <a href="https://homuraapp.elliewasaigenerated.workers.dev">Homura</a>
+        <a href="anime.html">Anime</a>
+        <a href="notebook.html">Blog</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="Website cover">
+      <div class="hero-parallax"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content shell">
+        <p class="eyebrow">Ellie Was AI Generated</p>
+        <h1>The Life and Times of Ellie Moore</h1>
+        <p class="hero-subtitle">Possibly a blog.</p>
+      </div>
+      <aside class="status-float" id="statusFloat" aria-label="Recent status updates">
+        <div class="status-float__header">
+          <div>
+            <div class="status-float__tag">#blog-status</div>
+            <h2 class="status-float__title">Status Updates</h2>
+          </div>
+          <div class="status-float__meta" id="statusMeta">Loading...</div>
+        </div>
+        <div class="status-float__list" id="statusList">
+          <article class="status-card status-card--loading">
+            <p class="status-card__text">Fetching a few recent status posts from Bluesky...</p>
+          </article>
+        </div>
+      </aside>
+    </section>
+
+    <section class="home-intro shell card-grid">
+      <article class="card">
+        <h2>About Ellie</h2>
+        <p>A brief introduction</p>
+        <a class="button" href="about.html">Read More</a>
+      </article>
+      <article class="card">
+        <h2>Some Vibes</h2>
+        <p>Playlists and original music</p>
+        <a class="button" href="music.html">Listen</a>
+      </article>
+      <article class="card">
+        <h2>Random Code</h2>
+        <p>Files I like</p>
+        <a class="button" href="code.html">Browse</a>
+      </article>
+      <article class="card">
+        <h2>Anime</h2>
+        <p>The ones that stuck around</p>
+        <a class="button" href="anime.html">Open List</a>
+      </article>
+      <article class="card">
+        <h2>Blog</h2>
+        <p>Bluesky stuff, organized</p>
+        <a class="button" href="notebook.html">Open Blog</a>
+      </article>
+    </section>
+
+    <h1 class="eyebrow" align="center">Social Media</h1>
+    <section class="home-intro shell card-grid">
+      <a class="card" href="https://www.linkedin.com/in/ellie-moore-profile/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.94 8.5H3.56V20h3.38V8.5ZM5.25 3A1.97 1.97 0 0 0 3.3 4.97c0 1.08.87 1.96 1.95 1.96h.02a1.96 1.96 0 1 0-.02-3ZM20.7 13.01c0-3.53-1.88-5.17-4.39-5.17-2.02 0-2.93 1.11-3.44 1.9V8.5H9.5c.04.82 0 11.5 0 11.5h3.38v-6.42c0-.34.02-.68.12-.93.27-.67.9-1.37 1.96-1.37 1.38 0 1.93 1.03 1.93 2.54V20H20.7v-6.99Z"/></svg>
+        </span>
+        <h2>LinkedIn</h2>
+      </a>
+
+      <a class="card" href="https://bsky.app/profile/ellie-was-ai-generated.net" target="_blank" rel="noopener noreferrer" aria-label="Bluesky">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10.74c-1.64-3.18-4.46-5.6-7.04-7.22C3.9 2.86 2.25 2.37 2.25 4.31c0 .39.22 3.29.36 3.76.49 1.62 2.26 2.17 3.83 1.9-2.74.47-3.44 2.01-1.93 3.56 2.87 2.94 4.12-.74 4.43-.65.31.09.53 1.6.61 1.98.28 1.26.87 2.43 1.88 3.25.28.23.58.42.91.57.33-.15.63-.34.91-.57 1.01-.82 1.6-1.99 1.88-3.25.08-.38.3-1.89.61-1.98.31-.09 1.56 3.59 4.43.65 1.51-1.55.81-3.09-1.93-3.56 1.57.27 3.34-.28 3.83-1.9.14-.47.36-3.37.36-3.76 0-1.94-1.65-1.45-2.71-.79-2.58 1.62-5.4 4.04-7.04 7.22Z"/></svg>
+        </span>
+        <h2>Bluesky</h2>
+      </a>
+
+      <a class="card" href="https://github.com/RedBedHed" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.8.5 12.33c0 5.22 3.3 9.64 7.87 11.2.58.11.79-.26.79-.58 0-.28-.01-1.22-.02-2.22-3.2.71-3.88-1.39-3.88-1.39-.52-1.37-1.28-1.73-1.28-1.73-1.04-.73.08-.71.08-.71 1.15.08 1.75 1.22 1.75 1.22 1.02 1.81 2.68 1.29 3.34.99.1-.76.4-1.29.72-1.58-2.55-.3-5.24-1.31-5.24-5.85 0-1.29.45-2.35 1.18-3.18-.12-.3-.51-1.51.11-3.14 0 0 .96-.32 3.15 1.21a10.7 10.7 0 0 1 5.74 0c2.19-1.53 3.15-1.21 3.15-1.21.62 1.63.23 2.84.11 3.14.73.83 1.18 1.89 1.18 3.18 0 4.55-2.69 5.54-5.25 5.84.41.36.78 1.08.78 2.18 0 1.58-.01 2.85-.01 3.24 0 .32.21.7.8.58A11.85 11.85 0 0 0 23.5 12.33C23.5 5.8 18.35.5 12 .5Z"/></svg>
+        </span>
+        <h2>GitHub</h2>
+      </a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>You are now entering the uncanny valley. Population: Ellie.</p>
+  </footer>
+  <div class="page-transition" aria-hidden="true"></div>
+  <script>
+    (() => {
+      const BLOG_STATUS_CONFIG = {
+        handle: "ellie-was-ai-generated.net",
+        apiBase: "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed",
+        pageSize: 20,
+        maxPages: 3,
+        tag: "#blog-status",
+        maxItems: 5,
+      };
+
+      const pageController = new AbortController();
+      const { signal } = pageController;
+      window.__ELLIE_PAGE_CLEANUP = () => pageController.abort();
+
+      const panel = document.getElementById("statusFloat");
+      const list = document.getElementById("statusList");
+      const meta = document.getElementById("statusMeta");
+
+      if (!panel || !list || !meta) {
+        return;
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function formatDate(isoString) {
+        try {
+          return new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            day: "numeric",
+          }).format(new Date(isoString));
+        } catch (_error) {
+          return "Recently";
+        }
+      }
+
+      function buildPostUrl(post) {
+        const uri = post?.uri || "";
+        const slug = uri.split("/").pop();
+        const handle = post?.author?.handle || BLOG_STATUS_CONFIG.handle;
+        return slug ? `https://bsky.app/profile/${handle}/post/${slug}` : `https://bsky.app/profile/${handle}`;
+      }
+
+      function getPostText(item) {
+        return item?.post?.record?.text || "";
+      }
+
+      function removeStatusTag(text) {
+        return String(text || "")
+          .replace(/#blog-status\b/gi, "")
+          .replace(/\n{3,}/g, "\n\n")
+          .trim();
+      }
+
+      function isOwnPost(item) {
+        return item?.post?.author?.handle === BLOG_STATUS_CONFIG.handle && !item?.reason;
+      }
+
+      function isReply(item) {
+        return Boolean(item?.post?.record?.reply);
+      }
+
+      async function fetchFeedPage(cursor) {
+        const params = new URLSearchParams({
+          actor: BLOG_STATUS_CONFIG.handle,
+          limit: String(BLOG_STATUS_CONFIG.pageSize),
+        });
+
+        if (cursor) {
+          params.set("cursor", cursor);
+        }
+
+        const response = await fetch(`${BLOG_STATUS_CONFIG.apiBase}?${params.toString()}`, { signal });
+        if (!response.ok) {
+          throw new Error(`Bluesky feed request failed with HTTP ${response.status}`);
+        }
+
+        return response.json();
+      }
+
+      function cardTemplate(item) {
+        const post = item.post;
+        const text = removeStatusTag(getPostText(item)) || "Status update";
+        return `
+          <article class="status-card">
+            <p class="status-card__text">${escapeHtml(text)}</p>
+            <div class="status-card__footer">
+              <span>${escapeHtml(formatDate(post.indexedAt || post.record?.createdAt || ""))}</span>
+              <a href="${escapeHtml(buildPostUrl(post))}" target="_blank" rel="noopener noreferrer">Open post</a>
+            </div>
+          </article>
+        `;
+      }
+
+      async function loadStatusFeed() {
+        let cursor = null;
+        let pageCount = 0;
+        const matches = [];
+
+        while (pageCount < BLOG_STATUS_CONFIG.maxPages && matches.length < BLOG_STATUS_CONFIG.maxItems) {
+          const payload = await fetchFeedPage(cursor);
+          const feed = Array.isArray(payload.feed) ? payload.feed : [];
+
+          feed.forEach((item) => {
+            if (matches.length >= BLOG_STATUS_CONFIG.maxItems) return;
+            if (!isOwnPost(item) || isReply(item)) return;
+
+            const text = getPostText(item).toLowerCase();
+            if (!text.includes(BLOG_STATUS_CONFIG.tag)) return;
+            matches.push(item);
+          });
+
+          cursor = payload.cursor || null;
+          pageCount += 1;
+          if (!cursor) break;
+        }
+
+        return matches;
+      }
+
+      async function bootStatusPanel() {
+        try {
+          const items = await loadStatusFeed();
+          if (signal.aborted) return;
+
+          if (!items.length) {
+            meta.textContent = "No statuses yet";
+            list.innerHTML = `
+              <article class="status-card status-card--empty">
+                <p class="status-card__text">When you post something tagged <code>#blog-status</code> on Bluesky, it can hover here.</p>
+              </article>
+            `;
+            return;
+          }
+
+          meta.textContent = `${items.length} recent update${items.length === 1 ? "" : "s"}`;
+          list.innerHTML = items.map(cardTemplate).join("");
+        } catch (error) {
+          if (signal.aborted) return;
+          console.error("Could not load status feed", error);
+          meta.textContent = "Feed offline";
+          list.innerHTML = `
+            <article class="status-card status-card--empty">
+              <p class="status-card__text">Bluesky is being a little difficult right now. Refreshing later should usually fix it.</p>
+            </article>
+          `;
+        }
+      }
+
+      bootStatusPanel();
+    })();
+  </script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

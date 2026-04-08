@@ -1,0 +1,370 @@
+#include "Fen.h"
+#include <ostream>
+#include <iostream>
+#include "Rollout.h"
+#include "analyzer.h"
+#include "Board.h"
+#include<unordered_map>
+#include <emscripten/emscripten.h>
+// #include "em.h"
+#include <string>
+#include <sstream>
+
+using namespace Homura;
+using namespace lexer;
+using std::unordered_map;
+using std::cout;
+using std::ostringstream;
+
+/*
+ * This file contains the main method. It parses 
+ * and handles a subset of UCI inputs. It is very
+ * inefficient in places, and the code quality is very
+ * poor. I need to just re-write this file completely.
+ * However, I don't have the time to do that for this
+ * "release."
+ */
+
+enum Tokens : uint32_t 
+{
+    UCI,
+    DEBUG,
+    ISREADY,
+    SETOPTION,
+    NAME,
+    REGISTER,
+    UCINEW,
+    POSITION,
+    STARTPOS,
+    MOVES,
+    GO,
+    SEARCHMOVES,
+    PONDER,
+    WTIME,
+    BTIME,
+    WINC,
+    BINC,
+    MOVESTOGO,
+    DEPTH,
+    NODES,
+    MATE,
+    MOVETIME,
+    INFINITE,
+    STOP,
+    PONDERHIT,
+    QUIT,
+    FEN,
+    ALLIANCE,
+    DASH,
+    CRIGHTS,
+    NUM,
+    BOARD,
+    LITERAL,
+    _EOF,
+    ERROR
+};
+
+void init_move_map
+    (
+    unordered_map<string, Move>& moveMap
+    ) 
+{
+    for(int j = 0; j < 64; ++j) {
+        for(int i = 0; i < 64; ++i) {
+            string s = SquareToString[j]; 
+            s.append(SquareToString[i]);
+            // std::cout << s << '\n';
+            moveMap[s] = Move::make(j, i);
+        }
+    }
+}
+
+void tryParseStartPos
+    (
+    Analyzer& a, 
+    Board* const b,
+    State*& ss,
+    MemManager& gc,
+    unordered_map<string, Move> moveMap
+    ) 
+{
+    Token t;
+    if((t = a.peekTok()).token != STARTPOS) {
+        cout << "invalid position arg: " << t.lexeme << '\n';
+        return;
+    }
+    a.nextTok();
+    if((t = a.peekTok()).token != MOVES) {
+        if(t.token != _EOF)
+            cout << "invalid position arg: " << t.lexeme << '\n';
+        return;
+    }
+    a.nextTok();
+    while(a.peekTok().token == LITERAL) {
+        t = a.nextTok();
+        Move mv;
+        if(t.lexeme.size() > 4) {
+            uint16_t i = 0;
+            switch(t.lexeme[4]) {
+                case 'q':
+                    i = (Queen - Rook) << 12U;
+                    break;
+                case 'n':
+                    i = (Knight - Rook) << 12U;
+                    break;
+                case 'r':
+                    i = 0;
+                    break;
+                case 'b':
+                    i = (Bishop - Rook) << 12U;
+                    break;
+            }
+            mv = Move(moveMap[t.lexeme.substr(0, 4)].getManifest() | i | 0x8000U);
+        } else mv = moveMap[t.lexeme];
+        MoveList<MCTS> ml(b);
+        Move* k = ml.begin();
+        Move* e = ml.end();
+        for(; k < e; ++k) {
+            if(mv.origin() != 
+                (*k).origin() ||
+            mv.destination() != 
+                (*k).destination() ||
+                (t.lexeme.size() > 4 && 
+                mv.promotionPiece() != 
+                    (*k).promotionPiece())) 
+                continue;
+            b->applyMove(*k, *ss++);
+            break;
+        }
+    }
+    return;
+}
+
+namespace {
+    MemManager gc;
+    State state;
+    State stack_[512];
+    State *ss = stack_;    
+    control q;
+    string move_str;
+    
+}
+
+extern "C" {
+EMSCRIPTEN_KEEPALIVE
+int32_t evaluate_by_search
+    (
+    const char* fen
+    ) 
+{
+    ostringstream s;
+    char info[500];
+    Board b = FenUtility::parseBoard(fen, &state);
+
+    int hard = 5000;
+    int soft = 5000;
+    Homura::Node* n = new Homura::Node[100];
+    int32_t score;
+    Move m = search(&b, info, n, gc, q, hard, soft, score); 
+    s << "info " << info << '\n';         
+    // b.applyMove(m, *ss++);
+    s << SquareToString[m.origin()] 
+      << SquareToString[m.destination()];
+    if(m.isPromotion()) {
+        switch(m.promotionPiece()) {
+            case Queen:
+                cout << 'q';
+                break;
+            case Bishop:
+                cout << 'b';
+                break;
+            case Knight:
+                cout << 'n';
+                break;
+            case Rook:
+                cout << 'r';
+                break;
+        }
+    }
+    cout << '\n';
+    gc.collectRoots(n);
+
+    move_str = s.str();
+
+    return score;
+}
+
+
+EMSCRIPTEN_KEEPALIVE
+void new_game()
+{
+    gc.reset();
+    Zobrist::reset();
+    ss = stack_;
+    q.clearHistory();
+}
+
+EMSCRIPTEN_KEEPALIVE
+const char* best_move()
+{
+    return move_str.c_str();
+}
+
+EMSCRIPTEN_KEEPALIVE
+void init()
+{
+    Witchcraft::init();
+    Zobrist::init();
+}
+
+EMSCRIPTEN_KEEPALIVE
+void destroy()
+{
+    Zobrist::destroy();
+    Witchcraft::destroy();
+}
+
+
+}
+
+// void handleGo
+//     (
+//     Board& b,
+//     Analyzer& a, 
+//     Token& t, 
+//     char* info,
+//     State*& ss,
+//     MemManager& gc,
+//     control& q
+//     ) 
+// {
+//     int hard = 5000;
+//     int soft = 5000;
+//     int inc = 0;
+//     if(a.peekTok().token != _EOF) {
+//         t = a.nextTok();
+//         switch(t.token) {
+//         case MOVETIME:
+//             t = a.nextTok();
+//             hard = atoi(t.lexeme.c_str());
+//             soft = INT32_MAX;
+//             break;
+//         case INFINITE: // infinite gives Homura five seconds. 
+//             break;
+//         case WTIME:
+//         {
+//             if(b.currentPlayer() == White)
+//             {
+//                 hard = stoi(a.nextTok().lexeme);
+//                 a.nextTok(); a.nextTok();
+//                 if(a.peekTok().token == WINC)
+//                 {
+//                     a.nextTok();
+//                     inc = stoi(a.nextTok().lexeme);
+//                 }
+//             }
+//             else
+//             {
+//                 a.nextTok(); a.nextTok();
+//                 hard = stoi(a.nextTok().lexeme);
+//                 if(a.peekTok().token == WINC)
+//                 {
+//                     a.nextTok(); a.nextTok(); a.nextTok();
+//                     inc = stoi(a.nextTok().lexeme);
+//                 }
+//             }
+
+//             soft = std::clamp(int(0.6 * (hard / 20.0 + (inc * 3.0) / 4.0)), 1, hard);
+//             hard = int(hard / 2.0);
+//         }
+//         default:
+//             cout << "invalid go arg: " << t.lexeme << '\n';
+//             break;
+//         }
+//     }
+//     Homura::Node* n = new Homura::Node[100];
+//     Move m = search(&b, info, n, gc, q, hard, soft); 
+//     cout << "info " << info << '\n';         
+//     b.applyMove(m, *ss++);
+//     cout << "bestmove " 
+//          << SquareToString[m.origin()] 
+//          << SquareToString[m.destination()];
+//     if(m.isPromotion()) {
+//         switch(m.promotionPiece()) {
+//             case Queen:
+//                 cout << 'q';
+//                 break;
+//             case Bishop:
+//                 cout << 'b';
+//                 break;
+//             case Knight:
+//                 cout << 'n';
+//                 break;
+//             case Rook:
+//                 cout << 'r';
+//                 break;
+//         }
+//     }
+//     cout << '\n';
+//     gc.collectRoots(n);
+// }
+
+int main() 
+{
+    
+    // unordered_map<string, Move> moveMap;
+    // init_move_map(moveMap);
+    // State state, stack[512], *ss = stack;
+    // char info[500];
+    // Board b = Board::Builder<Default>(state).build();
+    // lexer::Analyzer a;
+    // a.loadSpec("ospec.txt");
+    // MemManager gc;
+    // while(true) {  
+    //     string s;
+    //     getline(cin, s, '\n');
+    //     a.nextInput(s);
+    //     Token t = a.nextTok();
+    //     switch(t.token) {
+    //     case STOP: break;
+    //     case QUIT: case ERROR: goto out; 
+    //     case UCI:
+    //         cout << "id name Homura\n";
+    //         cout << "id author Ellie Moore\n";
+    //         cout << "uciok\n";
+    //         break;
+    //     case ISREADY:
+    //         cout << "readyok\n";
+    //         break;
+    //     case UCINEW:
+    //         gc.reset();
+    //         b = Board::Builder<Default>(state).build();
+    //         Zobrist::reset();
+    //         ss = stack;
+    //         q.clearHistory();
+    //         moves = 1;
+    //         break;
+    //     case POSITION:
+    //         b = Board::Builder<Default>(state).build();
+    //         ss = stack;
+    //         tryParseStartPos(a, &b, ss, gc, moveMap);
+    //         break;
+    //     case GO: 
+    //         handleGo(b, a, t, info, ss, gc, q);
+    //         break;
+    //     case BOARD:
+    //         cout << "here:\n" << b << '\n';
+    //         break;
+    //     case _EOF:
+    //         cout << "no cmd\n";
+    //         continue;
+    //     default:
+    //         cout << "unknown cmd: " << t.lexeme << '\n';
+    //     }
+    //     while(a.nextTok().token != _EOF);
+    // }
+    // out:
+    // cout << "done" << '\n';
+
+    return 0;
+}

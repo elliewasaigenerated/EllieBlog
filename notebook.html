@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog | Ellie Was AI Generated</title>
+  <meta name="description" content="A small notebook page fed by tagged Bluesky posts." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .notebook-shell { max-width: 1220px; }
+    .notebook-intro {
+      max-width: 780px;
+      margin: 0 0 1.75rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1.05rem;
+    }
+
+    .notebook-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin: 0 0 1rem;
+    }
+
+    .notebook-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.55rem 0.82rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .notebook-filter-shell {
+      display: grid;
+      /* border: 1px solid var(--border); */
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(31, 30, 30, 0.164), rgba(0,0,0,0.1));
+      box-shadow: var(--shadow);
+      padding: 1.05rem;
+      gap: 0.7rem;
+      margin: 0 0 1.5rem;
+    }
+
+    .notebook-filter-hint {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .notebook-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      margin: 0;
+    }
+
+    .notebook-filter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .notebook-filter:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 208, 169, 0.25);
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .notebook-filter.is-active {
+      border-color: rgba(255, 208, 169, 0.32);
+      background: rgba(255, 162, 68, 0.12);
+      color: #fff3e7;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .notebook-filter__tag {
+      color: #ffd0a9;
+      font-family: "Righteous", system-ui, sans-serif;
+      letter-spacing: 0.03em;
+      font-size: 0.82rem;
+    }
+
+    .notebook-sections {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .notebook-section {
+      display: grid;
+      gap: 0.55rem;
+      align-content: start;
+      min-height: 0;
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(52, 52, 52, 0.23), 30%, rgba(0, 0, 0, 0.25));
+      box-shadow: var(--shadow);
+    }
+
+    .notebook-section[hidden] {
+      display: none;
+    }
+
+    .notebook-section__header {
+      display: grid;
+      gap: 0.55rem;
+      align-content: start;
+      min-height: 5rem;
+    }
+
+    .notebook-section__heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .notebook-section__title {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    .notebook-section__tag {
+      color: #ffd0a9;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+      font-family: "Righteous", system-ui, sans-serif;
+    }
+
+    .notebook-section__description {
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 24rem;
+      min-height: 2.6rem;
+    }
+
+    .notebook-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+      row-gap: 1.20;
+      max-height: 36rem;
+      min-height: 20rem;
+      align-content: start;
+      overflow-y: auto;
+      margin-top: 0;
+      padding-top: 0.1rem;
+      padding-right: 0.35rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(169, 241, 255, 0.35) rgba(255,255,255,0.04);
+    }
+
+    .notebook-grid::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .notebook-grid::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+    }
+
+    .notebook-grid::-webkit-scrollbar-thumb {
+      background: rgba(255, 208, 169, 0.24);
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,0);
+      background-clip: padding-box;
+    }
+
+    .note-card {
+      padding: 1.05rem;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255, 162, 68, 0.066), rgba(0,0,0, 0.06));
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+      display: grid;
+      gap: 0.85rem;
+      align-content: start;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .note-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 208, 169, 0.28);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+    }
+
+    .note-card--loading {
+      opacity: 0.76;
+    }
+
+    .note-card__eyebrow {
+      color: #ffd0a9;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      font-family: "Righteous", system-ui, sans-serif;
+    }
+
+    .note-card__text {
+      margin: 0;
+      color: var(--text);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .note-card__video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 18px;
+      background: #090909;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .note-card__image {
+      width: 100%;
+      /* aspect-ratio: 16 / 10; */
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: #111;
+    }
+
+    .note-card__footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: center;
+      margin-top: 0.2rem;
+    }
+
+    .note-card__stamp,
+    .note-card__counts,
+    .note-empty {
+      color: var(--muted);
+    }
+
+    .note-card__counts {
+      display: inline-flex;
+      gap: 0.7rem;
+      align-items: center;
+      font-size: 0.92rem;
+      flex-wrap: wrap;
+    }
+
+    .note-empty,
+    .notebook-section__empty {
+      margin-top: 1rem;
+      padding: 1rem 1.05rem;
+      /* border: 1px solid var(--border); */
+      border-radius: 18px;
+      background: rgba(59, 56, 56, 0.025);
+      line-height: 1.6;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 980px) {
+      .notebook-sections {
+        grid-template-columns: 1fr;
+      }
+
+      .notebook-grid {
+        max-height: none;
+        min-height: 0;
+        overflow-y: visible;
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg">
+          <a href="index.html"></a>
+        </img>
+        <a class="brand" href="index.html">Ellie Was AI Generated</a>
+      </div>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="about.html">About</a>
+        <a href="music.html">Music</a>
+        <a href="code.html">Code</a>
+        <a href="https://homuraapp.elliewasaigenerated.workers.dev" target="_blank" rel="noopener noreferrer" data-homura-app-link>Homura</a>
+        <a href="anime.html">Anime</a>
+        <a class="active" href="notebook.html">Blog</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page shell notebook-shell">
+    <section class="page-hero page-header" style="--hero-image: url('../img/notebook-hdr.png'); --hero-position: center 45%;">
+      <div class="page-hero-parallax"></div>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <p class="eyebrow">Si Tacuisses, Philosophus Mansisses</p>
+        <h1>Blog</h1>
+      </div>
+    </section>
+
+    <section class="notebook-meta">
+      <div class="notebook-chip" id="notebookStatus">Loading notebook entries...</div>
+      <a class="notebook-chip" id="notebookProfile" href="https://bsky.app/profile/ellie-was-ai-generated.net" target="_blank" rel="noopener noreferrer">Open Bluesky profile</a>
+    </section>
+
+    <section class="notebook-filter-shell" aria-label="Notebook categories">
+      <div class="notebook-filter-hint" align="center">Filter by Topic</div>
+      <div class="notebook-filters" id="notebookFilters" aria-label="Notebook categories"></div>
+    </section>
+    <section class="notebook-sections" id="notebookSections"></section>
+    <section class="note-empty" id="notebookEmpty" align="center" hidden>No matching <code>#blog-*</code> posts yet. When you are ready, post one on Bluesky and it can show up here.</section>
+  </main>
+
+  <footer class="site-footer">
+    <p>You are now entering the uncanny valley. Population: Ellie.</p>
+  </footer>
+
+  <div class="page-transition" aria-hidden="true"></div>
+
+  <script>
+    const NOTEBOOK_CONFIG = {
+      handle: "ellie-was-ai-generated.net",
+      apiBase: "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed",
+      pageSize: 30,
+      maxPages: 4,
+      postsPerSection: 3,
+      sections: [
+        { key: "status", tags: ["#blog-status"], title: "Status", description: "⚠️ Status pings." },
+        { key: "movies", tags: ["#blog-movie", "#blog-movies"], title: "Movies", description: "📺 Stuff I'm watching." },
+        { key: "books", tags: ["#blog-book", "#blog-books"], title: "Books", description: "📖 Stuff I'm reading." },
+        { key: "anime", tags: ["#blog-anime"], title: "Anime", description: "🍥 Current fixations." },
+        { key: "code", tags: ["#blog-code", "#blog-coding"], title: "Code", description: "💾 Code and debugging topics." },
+        { key: "music", tags: ["#blog-music"], title: "Music", description: "🎶 Stuff that I found or remembered and felt the need to post about." },
+        { key: "shower-thoughts", tags: ["#blog-showerthought", "#blog-showerthoughts"], title: "Shower Thoughts", description: "💡 No rhyme or reason." },
+        { key: "blog-brainworm", tags: ["#blog-brainworm", "#blog-brainworms"], title: "Brainworms", description: "🪱 Thinking too much." },
+        { key: "rants", tags: ["#blog-rant", "#blog-rants"], title: "Rants", description: "(｡•`⤙´•｡) Hmpf." },
+      ],
+    };
+
+    const pageController = new AbortController();
+    const { signal } = pageController;
+    window.__ELLIE_PAGE_CLEANUP = () => pageController.abort();
+
+    const notebookSections = document.getElementById("notebookSections");
+    const notebookFilters = document.getElementById("notebookFilters");
+    const notebookEmpty = document.getElementById("notebookEmpty");
+    const notebookStatus = document.getElementById("notebookStatus");
+    const notebookProfile = document.getElementById("notebookProfile");
+    const selectedSections = new Set(["status"]);
+
+    function embedsAllowed() {
+      return window.EllieEmbedConsent?.isAllowed?.() !== false;
+    }
+
+    function embedPlaceholder(title, body) {
+      return window.EllieEmbedConsent?.createPlaceholder?.({ title, body }) || `
+        <div class="embed-placeholder">
+          <div class="embed-placeholder__title">${title}</div>
+          <p class="embed-placeholder__body">${body}</p>
+          <button class="embed-placeholder__button" type="button" data-open-embed-consent>Enable embeds</button>
+        </div>
+      `;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function removeKnownTags(text) {
+      let cleaned = text || "";
+      NOTEBOOK_CONFIG.sections.forEach((section) => {
+        section.tags.forEach((tag) => {
+          cleaned = cleaned.replaceAll(tag, "");
+        });
+      });
+      return cleaned.trim();
+    }
+
+    function stripEmbeddedYoutubeLinks(text) {
+      return String(text || "")
+        .replace(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtube\.com\/shorts\/|youtu\.be\/)[^\s]+/gi, "")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    }
+
+    function formatDate(isoString) {
+      try {
+        return new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }).format(new Date(isoString));
+      } catch (_error) {
+        return isoString || "";
+      }
+    }
+
+    function buildPostUrl(post) {
+      const uri = post?.uri || "";
+      const slug = uri.split("/").pop();
+      const handle = post?.author?.handle || NOTEBOOK_CONFIG.handle;
+      return slug ? `https://bsky.app/profile/${handle}/post/${slug}` : `https://bsky.app/profile/${handle}`;
+    }
+
+    function getPostText(item) {
+      return item?.post?.record?.text || "";
+    }
+
+    function getMatchingSections(item) {
+      const text = getPostText(item).toLowerCase();
+      return NOTEBOOK_CONFIG.sections.filter((section) =>
+        section.tags.some((tag) => text.includes(tag.toLowerCase()))
+      );
+    }
+
+    function isOwnPost(item) {
+      return item?.post?.author?.handle === NOTEBOOK_CONFIG.handle && !item?.reason;
+    }
+
+    function isReply(item) {
+      return Boolean(item?.post?.record?.reply);
+    }
+
+    function getImageUrl(item) {
+      const images = item?.post?.embed?.images;
+      if (Array.isArray(images) && images.length > 0) {
+        return images[0].fullsize || images[0].thumb || "";
+      }
+      return "";
+    }
+
+    function extractUrlsFromText(text) {
+      const matches = String(text || "").match(/https?:\/\/[^\s]+/gi);
+      return matches || [];
+    }
+
+    function extractFacetUrls(item) {
+      const facets = item?.post?.record?.facets;
+      if (!Array.isArray(facets)) return [];
+
+      return facets
+        .flatMap((facet) => Array.isArray(facet?.features) ? facet.features : [])
+        .filter((feature) => feature?.$type === "app.bsky.richtext.facet#link" && typeof feature.uri === "string")
+        .map((feature) => feature.uri);
+    }
+
+    function extractEmbedUrls(item) {
+      const urls = [];
+      const embed = item?.post?.embed;
+      if (embed?.external?.uri) urls.push(embed.external.uri);
+      if (embed?.media?.external?.uri) urls.push(embed.media.external.uri);
+      return urls;
+    }
+
+    function extractYouTubeId(url) {
+      if (!url) return "";
+      try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace(/^www\./, "").toLowerCase();
+
+        if (host === "youtu.be") {
+          return parsed.pathname.split("/").filter(Boolean)[0] || "";
+        }
+
+        if (host.endsWith("youtube.com")) {
+          if (parsed.pathname === "/watch") {
+            return parsed.searchParams.get("v") || "";
+          }
+
+          if (parsed.pathname.startsWith("/shorts/")) {
+            return parsed.pathname.split("/").filter(Boolean)[1] || "";
+          }
+
+          if (parsed.pathname.startsWith("/embed/")) {
+            return parsed.pathname.split("/").filter(Boolean)[1] || "";
+          }
+        }
+      } catch (_error) {
+        return "";
+      }
+      return "";
+    }
+
+    function getYouTubeVideoId(item) {
+      const candidates = [
+        ...extractFacetUrls(item),
+        ...extractEmbedUrls(item),
+        ...extractUrlsFromText(getPostText(item)),
+      ];
+
+      for (const url of candidates) {
+        const videoId = extractYouTubeId(url);
+        if (videoId) return videoId;
+      }
+
+      return "";
+    }
+
+    function buildYouTubeEmbedUrl(videoId) {
+      return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : "";
+    }
+
+    function loadingCard() {
+      return `
+        <article class="note-card note-card--loading">
+          <div class="note-card__eyebrow">Blog</div>
+          <p class="note-card__text">Loading recent tagged posts...</p>
+        </article>
+      `;
+    }
+
+    function noteCardTemplate(item) {
+      const post = item.post;
+      const cleanedText = stripEmbeddedYoutubeLinks(removeKnownTags(getPostText(item)) || getPostText(item));
+      const imageUrl = getImageUrl(item);
+      const youTubeVideoId = getYouTubeVideoId(item);
+      const youTubeEmbedUrl = buildYouTubeEmbedUrl(youTubeVideoId);
+      return `
+        <article class="note-card">
+          <div class="note-card__eyebrow">Blog</div>
+          ${cleanedText ? `<p class="note-card__text">${escapeHtml(cleanedText)}</p>` : ""}
+          ${youTubeEmbedUrl ? (embedsAllowed() ? `<iframe class="note-card__video" src="${escapeHtml(youTubeEmbedUrl)}" title="YouTube video embed" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>` : embedPlaceholder("YouTube embed disabled", "Accept third-party embeds to load linked videos.")) : ""}
+          ${imageUrl ? `<img class="note-card__image" src="${escapeHtml(imageUrl)}" alt="" loading="lazy">` : ""}
+          <div class="note-card__footer">
+            <div class="note-card__stamp">${escapeHtml(formatDate(post.indexedAt || post.record?.createdAt || ""))}</div>
+            <div class="note-card__counts">
+              <span>${post.likeCount || 0} likes</span>
+              <span>${post.replyCount || 0} replies</span>
+              <a href="${escapeHtml(buildPostUrl(post))}" target="_blank" rel="noopener noreferrer">Open post</a>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    async function fetchFeedPage(cursor) {
+      const params = new URLSearchParams({
+        actor: NOTEBOOK_CONFIG.handle,
+        limit: String(NOTEBOOK_CONFIG.pageSize),
+      });
+
+      if (cursor) {
+        params.set("cursor", cursor);
+      }
+
+      const response = await fetch(`${NOTEBOOK_CONFIG.apiBase}?${params.toString()}`, { signal });
+      if (!response.ok) {
+        throw new Error(`Bluesky feed request failed with HTTP ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    function sectionTemplate(section) {
+      return `
+        <section class="notebook-section" data-section-key="${escapeHtml(section.key)}" hidden>
+          <div class="notebook-section__header">
+            <div class="notebook-section__heading">
+              <div>
+                <div class="notebook-section__tag">${escapeHtml(section.tags[0])}</div>
+                <h2 class="notebook-section__title">${escapeHtml(section.title)}</h2>
+              </div>
+            </div>
+            <div class="notebook-section__description">${escapeHtml(section.description)}</div>
+          </div>
+          <div class="notebook-grid"></div>
+        </section>
+      `;
+    }
+
+    function filterTemplate(section) {
+      const isActive = selectedSections.has(section.key);
+      return `
+        <button class="notebook-filter ${isActive ? "is-active" : ""}" type="button" data-filter-key="${escapeHtml(section.key)}" aria-pressed="${isActive}">
+          <span>${escapeHtml(section.title)}</span>
+          <span class="notebook-filter__tag">${escapeHtml(section.tags[0])}</span>
+        </button>
+      `;
+    }
+
+    function renderSections() {
+      notebookSections.innerHTML = NOTEBOOK_CONFIG.sections.map(sectionTemplate).join("");
+    }
+
+    function renderFilters() {
+      notebookFilters.innerHTML = NOTEBOOK_CONFIG.sections.map(filterTemplate).join("");
+      notebookFilters.querySelectorAll('[data-filter-key]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const key = button.dataset.filterKey;
+          if (!key) return;
+
+          if (selectedSections.has(key)) {
+            selectedSections.delete(key);
+          } else {
+            selectedSections.add(key);
+          }
+
+          const isActive = selectedSections.has(key);
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-pressed', String(isActive));
+          renderSectionPosts(window.__ELLIE_NOTEBOOK_ENTRIES_BY_KEY || new Map());
+        }, { signal });
+      });
+    }
+
+    function renderSectionPosts(entriesByKey) {
+      window.__ELLIE_NOTEBOOK_ENTRIES_BY_KEY = entriesByKey;
+
+      let totalVisibleSections = 0;
+      let totalEntries = 0;
+
+      NOTEBOOK_CONFIG.sections.forEach((section) => {
+        const sectionEl = notebookSections.querySelector(`[data-section-key="${section.key}"]`);
+        const grid = sectionEl?.querySelector(".notebook-grid");
+        if (!sectionEl || !grid) return;
+
+        const entries = entriesByKey.get(section.key) || [];
+        const isSelected = selectedSections.has(section.key);
+
+        if (!entries.length || !isSelected) {
+          sectionEl.hidden = true;
+          grid.innerHTML = "";
+          return;
+        }
+
+        totalVisibleSections += 1;
+        totalEntries += entries.length;
+        sectionEl.hidden = false;
+        grid.innerHTML = entries.map(noteCardTemplate).join("");
+      });
+
+      notebookEmpty.hidden = totalVisibleSections !== 0;
+      if (totalVisibleSections === 0 && selectedSections.size === 0) {
+        notebookStatus.textContent = "No categories selected";
+        notebookEmpty.innerHTML = 'Choose at least one topic from the filter above.';
+      } else {
+        notebookEmpty.innerHTML = 'No matching <code>#blog-*</code> posts. Try adding another topic to the filter above.';
+        notebookStatus.textContent = totalEntries
+          ? `${totalEntries} notebook entr${totalEntries === 1 ? "y" : "ies"} across ${totalVisibleSections} section${totalVisibleSections === 1 ? "" : "s"}`
+          : 'No matching #blog-* posts yet';
+      }
+    }
+
+    async function loadBlogEntries() {
+      const entriesByKey = new Map(NOTEBOOK_CONFIG.sections.map((section) => [section.key, []]));
+      let cursor = "";
+
+      for (let page = 0; page < NOTEBOOK_CONFIG.maxPages; page += 1) {
+        const payload = await fetchFeedPage(cursor);
+        const feed = Array.isArray(payload.feed) ? payload.feed : [];
+
+        feed.forEach((item) => {
+          const matchingSections = getMatchingSections(item);
+          if (!isOwnPost(item) || isReply(item) || !matchingSections.length) {
+            return;
+          }
+
+          matchingSections.forEach((section) => {
+            const currentEntries = entriesByKey.get(section.key);
+            if (currentEntries && currentEntries.length < NOTEBOOK_CONFIG.postsPerSection) {
+              currentEntries.push(item);
+            }
+          });
+        });
+
+        const filledAllSections = NOTEBOOK_CONFIG.sections.every((section) => {
+          const entries = entriesByKey.get(section.key) || [];
+          return entries.length >= NOTEBOOK_CONFIG.postsPerSection;
+        });
+
+        if (filledAllSections) break;
+        if (!payload.cursor) break;
+        cursor = payload.cursor;
+      }
+
+      return entriesByKey;
+    }
+
+    async function boot() {
+      renderSections();
+      renderFilters();
+      window.addEventListener("ellie:embed-consent-change", (event) => {
+        if (event.detail?.allowed) {
+          window.location.reload();
+          return;
+        }
+        renderSectionPosts(window.__ELLIE_NOTEBOOK_ENTRIES_BY_KEY || new Map());
+      }, { signal });
+      notebookSections.querySelectorAll(".notebook-grid").forEach((grid) => {
+        grid.innerHTML = [loadingCard()].join("");
+      });
+      notebookProfile.href = `https://bsky.app/profile/${NOTEBOOK_CONFIG.handle}`;
+
+      try {
+        const entriesByKey = await loadBlogEntries();
+        renderSectionPosts(entriesByKey);
+      } catch (error) {
+        notebookSections.innerHTML = `
+          <article class="note-card">
+            <div class="note-card__eyebrow">Blog</div>
+            <p class="note-card__text">Could not load Bluesky notes right now.</p>
+            <div class="note-card__stamp">${escapeHtml(error.message)}</div>
+          </article>
+        `;
+        notebookFilters.innerHTML = "";
+        notebookEmpty.hidden = true;
+        notebookStatus.textContent = "Blog temporarily unavailable";
+      }
+    }
+
+    boot();
+  </script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

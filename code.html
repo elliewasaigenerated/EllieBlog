@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code | Ellie Was AI Generated</title>
+  <meta name="description" content="Code samples and repository pages for Ellie Moore." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+  <style>
+    .hljs {
+      display: block !important;
+      overflow-x: auto !important;
+      padding: .5em !important;
+      color: #abb2bf !important;
+      background: #0d1717 !important;
+    }
+
+    .hljs-comment,
+    .hljs-quote {
+      color: #5c6370 !important;
+      font-style: italic !important;
+    }
+
+    .hljs-doctag,
+    .hljs-formula,
+    .hljs-keyword {
+      color: #c29884 !important;
+    }
+
+    .hljs-deletion,
+    .hljs-name,
+    .hljs-section,
+    .hljs-selector-tag,
+    .hljs-subst {
+      color: #6ce0dc !important;
+    }
+
+    .hljs-literal {
+      color: #56c268 !important;
+    }
+
+    .hljs-addition,
+    .hljs-attribute,
+    .hljs-meta-string,
+    .hljs-regexp,
+    .hljs-string {
+      color: #79c39f !important;
+    }
+
+    .hljs-built_in,
+    .hljs-class .hljs-title {
+      color: #e6a27b !important;
+    }
+
+    .hljs-attr,
+    .hljs-number,
+    .hljs-selector-attr,
+    .hljs-selector-class,
+    .hljs-selector-pseudo,
+    .hljs-template-variable,
+    .hljs-type,
+    .hljs-variable {
+      color: #66ccd1 !important;
+    }
+
+    .hljs-bullet,
+    .hljs-link,
+    .hljs-meta,
+    .hljs-selector-id,
+    .hljs-symbol,
+    .hljs-title {
+      color: #61cdee !important;
+    }
+
+    .hljs-emphasis {
+      font-style: italic !important;
+    }
+
+    .hljs-strong {
+      font-weight: 700 !important;
+    }
+
+    .hljs-link {
+      text-decoration: underline !important;
+    }
+
+    .code-page {
+      padding: 4rem 0 5rem;
+    }
+
+    .code-shell {
+      max-width: 1580px;
+      margin: 0 auto;
+    }
+
+    /**/
+
+
+
+    .repo-strip,
+    .file-panel,
+    .code-viewer {
+      background: linear-gradient(180deg, var(--surface), var(--surface-2));
+      /* border: 1px solid var(--border); */
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .repo-strip {
+      margin-bottom: 1rem;
+      padding: 1rem 1.1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .repo-strip-label {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-right: 0.2rem;
+    }
+
+    .repo-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      text-decoration: none;
+      transition: 0.18s ease;
+    }
+
+    .repo-chip:hover {
+      background: var(--accent-soft);
+      color: #ffd0a9;
+      text-decoration: none;
+      border-color: rgba(255, 208, 169, 0.18);
+    }
+
+    .file-panel {
+      /* display: flex; */
+      margin-bottom: 1rem;
+      padding: 1rem;
+      justify-items: space-between;
+      place-items: center;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      /* align-items: center; */
+
+      /* color:var(--accent); */
+      background-image: linear-gradient(180deg,var(--accent-soft), var(--surface) 70%);
+    }
+
+    .file-panel-top {
+      display: flex;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+      flex-wrap:wrap;
+    }
+
+    .file-panel h2,
+    .code-viewer h2 {
+      margin: 0 0 0.45rem;
+      font-size: 1.35rem;
+    }
+
+    .file-panel .helper {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.96rem;
+      max-width: 740px;
+    }
+
+    .code-search {
+      width: min(360px, 100%);
+      padding: 0.85rem 0.95rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      font: inherit;
+    }
+
+    .file-strip {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      overflow-x: visible;
+      padding: 0.2rem 0.1rem 0.35rem;
+      scrollbar-width: thin;
+    }
+
+    .code-item {
+      flex: 0 0 auto;
+      min-width: 250px;
+      width: 24%;
+      text-align: left;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0.85rem 0.9rem;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .code-item:hover,
+    .code-item.active {
+      border-color: rgba(255, 208, 169, 0.18);
+      background: var(--accent-soft);
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    .code-item-title {
+      display: block;
+      font-family: "Righteous", system-ui, sans-serif;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .code-item-meta {
+      display: block;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .file-panel {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      justify-items: center;
+      background-image: linear-gradient(180deg,var(--accent-soft), var(--surface) 70%);
+
+      overflow: hidden;
+      max-height: 600px;
+      opacity: 1;
+
+      transition:
+        max-height 0.35s ease,
+        opacity 0.25s ease,
+        padding 0.25s ease,
+        margin 0.25s ease,
+        border-width 0.25s ease;
+    }
+
+    .file-panel.collapsed {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-bottom: 0;
+      border-width: 0;
+    }
+
+    .file-panel.collapsed-desktop {
+      opacity: 0;
+      transform: translateX(-10px);
+      pointer-events: none;
+      width: 0;
+      min-width: 0;
+    }
+
+    .file-panel.collapsed + .code-viewer {
+      margin-top: 0.25rem;
+    }
+
+    .code-main-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .file-panel {
+      margin-bottom: 0;
+      padding: 1rem;
+      background-image: linear-gradient(180deg, var(--accent-soft), rgb(0,0,0,.25) 70%);
+      overflow: hidden;
+      opacity: 1;
+      max-height: none;
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        padding 0.25s ease,
+        border-width 0.25s ease;
+    }
+
+    .file-panel-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .file-panel.collapsed-desktop {
+      opacity: 0;
+      transform: translateX(-10px);
+      pointer-events: none;
+    }
+
+    .code-main-layout.files-hidden {
+      grid-template-columns: 0 minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .code-main-layout.files-hidden .file-panel {
+      padding-left: 0;
+      padding-right: 0;
+      border-width: 0;
+    }
+
+    @media (max-width: 900px) {
+      .code-main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .file-panel {
+        margin-bottom: 1rem;
+        max-height: 600px;
+        transform: translateY(0);
+      }
+
+      .file-panel.collapsed-mobile {
+        max-height: 0;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-width: 0;
+        pointer-events: none;
+      }
+    }
+
+    .code-viewer {
+      background-image: linear-gradient(180deg,var(--border), var(--shadow) 40%);
+      padding: 1rem;
+    }
+
+    .viewer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+
+    .viewer-top p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .viewer-info {
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+
+    .viewer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-content: center;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .viewer-actions a {
+      margin-top: 0;
+    }
+
+    .code-meta {
+      display: grid;
+      gap: 0.55rem;
+      margin-bottom: 1rem;
+    }
+
+    .code-meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.36rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: #ffd0a9;
+      font-size: 0.84rem;
+      letter-spacing: 0.03em;
+    }
+
+    .code-frame {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+
+    .code-frame-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.025);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .code-scroll {
+      overflow: auto;
+      background: #0d1717;
+      max-height: 76vh;
+    }
+
+    pre {
+      margin: 0;
+      min-width: max-content;
+      background: transparent !important;
+      color: #f6f2ec;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.93rem;
+      line-height: 1.55;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    pre code {
+      display: block;
+      padding: 0.8rem 0 1rem;
+      background: transparent !important;
+      font-family: inherit;
+    }
+
+    .code-line {
+      min-height: 1.35em;
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      align-items: start;
+    }
+
+    pre {
+      
+      font-size: 13.5px;
+      line-height: 1.4;
+      margin: 0;
+      padding: 0.6rem 0;
+    }
+
+    .line-no {
+      padding: 0 0.6rem 0 0.4rem;
+      line-height: 1.35;
+    }
+
+    .line-text {
+      padding: 0 1rem;
+      line-height: 1.35;
+    }
+
+    /* THIS is the important part */
+    .line-text span {
+      line-height: inherit;
+    }
+
+    .line-text:empty::before {
+      content: " ";
+      white-space: pre;
+    }
+
+    .status {
+      color: var(--muted);
+      line-height: 1.65;
+      padding: 0.25rem 0.1rem;
+    }
+
+    .note-card {
+      margin-top: 1rem;
+      padding: 1rem 1.05rem;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .note-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    .note-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.97rem;
+    }
+
+    .site-footer {
+      padding: 1rem 0 2rem;
+    }
+
+    .code-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      margin: 0;
+      min-width: 120px;
+      height: 50px;
+      padding: 0.8rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #042d2c;
+      color: #ffffff;
+      font: inherit;
+      font-family: "Righteous", system-ui, sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, filter 0.18s ease, background 0.18s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .code-button:hover {
+      text-decoration: none;
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .code-button:focus-visible {
+      outline: 2px solid rgba(255, 208, 169, 0.5);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 900px) {
+      .code-page {
+        padding-top: 3rem;
+      }
+
+      .code-search {
+        width: 100%;
+      }
+
+      .code-item {
+        min-width: 210px;
+      }
+
+      .code-scroll {
+        max-height: none;
+      }
+    }
+
+    .file-strip {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 900px) {
+      .file-strip {
+        display: flex;
+        gap: 0.8rem;
+        overflow-x: auto;
+        padding: 0.2rem 0.1rem 0.35rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg">
+          <a href="index.html"></a>
+        </img>
+        <a class="brand" href="index.html">Ellie Was AI Generated</a>
+      </div>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="about.html">About</a>
+        <a href="music.html">Music</a>
+        <a href="code.html" class="active">Code</a>
+        <a href="https://homuraapp.elliewasaigenerated.workers.dev" target="_blank" rel="noopener noreferrer" data-homura-app-link>Homura</a>
+        <a href="anime.html">Anime</a>
+        <a href="notebook.html">Blog</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="code-page shell code-shell">
+    <section class="page-hero page-header" style="--hero-image: url('../img/code-hdr.png'); --hero-position: center 25%;">
+      <div class="page-hero-parallax"></div>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <p class="eyebrow">Project Files</p>
+        <h1>Code</h1>
+        <p style="color:white">
+          Terrifying human code that I'm unreasonably attached to. Read at your own risk. (˵•̀ ᴗ -˵)
+        </p>
+      </div>
+    </section>
+
+    <div class="code-main-layout">
+      <section class="file-panel">
+        <div class="file-panel-inner">
+
+          <div class="file-panel-top" center="true">
+              <h2>Files</h2>
+          </div>
+          <div class="file-panel-top">
+          <input id="codeSearch" class="code-search" type="search" placeholder="Filter files..." aria-label="Filter code files" />
+          </div>
+          <div id="codeList" class="file-strip" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="code-viewer">
+        <div class="viewer-top">
+          <div>
+            <h2 id="viewerTitle">Select a file</h2>
+            <p id="viewerSubtitle">Choose a code sample above to display it here.</p>
+          </div>
+          <div class="viewer-actions">
+            <button id="toggleFiles" class="code-button" type="button">
+              Browse Files
+            </button>
+            <a id="openGithub" class="code-button" href="#" target="_blank" rel="noopener noreferrer">Open on GitHub</a>
+            <a id="openRaw" class="code-button" href="#" target="_blank" rel="noopener noreferrer">Raw File</a>
+            <button id="copyCode" class="code-button" type="button">Copy Contents</button>
+          </div>
+        </div>
+
+        <div class="code-meta">
+          <div class="code-meta-line">
+            <span class="pill" id="languagePill">language</span>
+            <span id="repoMeta">repo / path</span>
+          </div>
+        </div>
+
+        <div class="code-frame">
+          <div class="code-frame-header">
+            <span id="frameName">Nothing loaded yet</span>
+            <span id="frameStatus">Waiting</span>
+          </div>
+          <div class="code-scroll">
+            <pre><code id="codeBlock">Select a file from above.</code></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>You are now entering the uncanny valley. Population: Ellie.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/rust.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/csharp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/markdown.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/x86asm.min.js"></script>
+  <script type="module" src="assets/js/lic.js"></script>
+  <script type="module">
+    import { lic } from './assets/js/lic.js';
+    const CODE_PAGES = [
+      {
+        title: "Homura's Backtracking Search",
+        description: "Homura's backtracking search (Chess Engine Elo unkown).",
+        owner: "RedBedHed",
+        repo: "Homura",
+        ref: "main",
+        path: "src/Backtrack.cpp",
+        language: "cpp"
+      },
+      {
+        title: "Homura's Rollout Search",
+        description: "Homura's full rollout/backtracking hybrid search (Chess Engine Elo 2516 CCRL).",
+        owner: "RedBedHed",
+        repo: "Homura",
+        ref: "main",
+        path: "src/Rollout.cpp",
+        language: "cpp"
+      },
+      {
+        title: "Homura's Move Generator",
+        description: "Homura's Movegen, capable of generating moves for about ~480,000,000 games (bulk-counted leaf nodes) per second.",
+        owner: "RedBedHed",
+        repo: "Homura",
+        ref: "main",
+        path: "src/MoveMake.cpp",
+        language: "cpp"
+      },
+      {
+        title: "Boic Lexical Analyzer",
+        description: "A Regex Engine / Lexical Analyzer that uses Thompson's construction to compile an NFA from a specification file.",
+        owner: "RedBedHed",
+        repo: "boic-v1.0",
+        ref: "main",
+        path: "analyzer.cpp",
+        language: "cpp"
+      },
+      {
+        title: "Boic Expression Compiler",
+        description: "The portion of boic responsible for compiling ASTs into x86 intel syntax assembly.",
+        owner: "RedBedHed",
+        repo: "boic-v1.0",
+        ref: "main",
+        path: "expression.cpp",
+        language: "cpp"
+      },
+      {
+        title: "Boic Expression Parser",
+        description: "The portion of boic responsible for compiling expressions into ASTs.",
+        owner: "RedBedHed",
+        repo: "boic-v1.0",
+        ref: "main",
+        path: "parse_expression.cpp",
+        language: "cpp"
+      },
+      {
+        title: "Blipsort",
+        description: "Branchless Lomuto In Pattern Defeating Quicksort.",
+        owner: "RedBedHed",
+        repo: "blipsort",
+        ref: "main",
+        path: "sort.h",
+        language: "cpp"
+      },
+      {
+        title: "Iterative Blipsort",
+        description: "Branchless Lomuto In Pattern Defeating Quicksort, no recursion.",
+        owner: "RedBedHed",
+        repo: "blipsort_iterative",
+        ref: "main",
+        path: "sort.h",
+        language: "cpp"
+      },
+      {
+        title: "ASM TicTacToe",
+        description: "TicTacToe in x86 intel syntax assembly.",
+        owner: "RedBedHed",
+        repo: "x86-TicTacToe",
+        ref: "main",
+        path: "tictactoe.s",
+        language: "x86asm"
+      },
+      {
+        title: "Sudoku Generator",
+        description: "Super fast (for python) CSP Sudoku Generator.",
+        owner: "RedBedHed",
+        repo: "SudokuGen",
+        ref: "main",
+        path: "Sudoku.py",
+        language: "python"
+      }, 
+      {
+        title: "Deep Learning - Hello World",
+        description: "A multi-layer perceptron written in numpy to recognize handwritten digits.",
+        owner: "RedBedHed",
+        repo: "DL_HelloWorld",
+        ref: "main",
+        path: "nn.py",
+        language: "python"
+      }
+    ];
+
+    const EXTENSION_LANGUAGE_MAP = {
+      py: "python",
+      js: "javascript",
+      mjs: "javascript",
+      cjs: "javascript",
+      ts: "typescript",
+      tsx: "typescript",
+      jsx: "javascript",
+      cpp: "cpp",
+      cc: "cpp",
+      cxx: "cpp",
+      h: "cpp",
+      hpp: "cpp",
+      rs: "rust",
+      java: "java",
+      cs: "csharp",
+      go: "go",
+      json: "json",
+      md: "markdown",
+      sh: "bash",
+      yml: "yaml",
+      yaml: "yaml",
+      html: "xml",
+      css: "css",
+      x86asm: "x86asm"
+    };
+
+    const codeList = document.getElementById("codeList");
+    const codeSearch = document.getElementById("codeSearch");
+    const viewerTitle = document.getElementById("viewerTitle");
+    const viewerSubtitle = document.getElementById("viewerSubtitle");
+    const repoMeta = document.getElementById("repoMeta");
+    const frameName = document.getElementById("frameName");
+    const frameStatus = document.getElementById("frameStatus");
+    const codeBlock = document.getElementById("codeBlock");
+    const languagePill = document.getElementById("languagePill");
+    const openGithub = document.getElementById("openGithub");
+    const openRaw = document.getElementById("openRaw");
+    const pageController = new AbortController();
+    const { signal } = pageController;
+
+    window.__ELLIE_PAGE_CLEANUP = () => pageController.abort();
+
+    let currentIndex = 0;
+
+    function githubBlobUrl(item) {
+      return `https://github.com/${item.owner}/${item.repo}/blob/${encodeURIComponent(item.ref)}/${item.path}`;
+    }
+
+    function rawUrl(item) {
+      return `https://raw.githubusercontent.com/${item.owner}/${item.repo}/${encodeURIComponent(item.ref)}/${item.path}`;
+    }
+
+    function apiUrl(item) {
+      return `https://api.github.com/repos/${item.owner}/${item.repo}/contents/${item.path}?ref=${encodeURIComponent(item.ref)}`;
+    }
+
+    function decodeBase64Utf8(base64) {
+      const binary = atob(base64.replace(/\n/g, ""));
+      const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+      return new TextDecoder("utf-8").decode(bytes);
+    }
+
+    function guessLanguage(item) {
+      if (item.language) return item.language.toLowerCase();
+      const ext = item.path.split(".").pop()?.toLowerCase();
+      return EXTENSION_LANGUAGE_MAP[ext] || "plaintext";
+    }
+
+    function renderList(filter = "") {
+      codeList.innerHTML = "";
+      const q = filter.trim().toLowerCase();
+
+      const matches = CODE_PAGES
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => {
+          const haystack = `${item.title} ${item.description || ""} ${item.repo} ${item.path} ${item.language || ""}`.toLowerCase();
+          return haystack.includes(q);
+        });
+
+      if (!matches.length) {
+        const empty = document.createElement("div");
+        empty.className = "status";
+        empty.textContent = "No matching files.";
+        codeList.appendChild(empty);
+        return;
+      }
+
+      matches.forEach(({ item, index }) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "code-item";
+        btn.dataset.index = String(index);
+        if (index === currentIndex) btn.classList.add("active");
+
+        btn.innerHTML = `
+          <span class="code-item-title">${item.title}</span>
+          <span class="code-item-meta">${item.repo} • ${item.path}</span>
+        `;
+
+        btn.addEventListener("click", () => {
+          currentIndex = index;
+          renderList(codeSearch.value);
+          loadFile(index);
+        });
+
+        codeList.appendChild(btn);
+      });
+    }
+
+    function renderHighlightedCode(source, language) {
+      const safeLanguage = hljs.getLanguage(language) ? language : "plaintext";
+      const lines = source.replace(/\r\n/g, "\n").split("\n");
+
+      const htmlLines = lines.map((line, index) => {
+        const highlighted = line.length
+          ? hljs.highlight(line, { language: safeLanguage, ignoreIllegals: true }).value
+          : "";
+
+        return '<span class="code-line">' +
+          `<span class="line-no">${index + 1}</span>` +
+          `<span class="line-text">${highlighted || " "}</span>` +
+          '</span>';
+      }).join("");
+
+      codeBlock.className = `hljs language-${safeLanguage}`;
+      codeBlock.innerHTML = htmlLines;
+      languagePill.textContent = safeLanguage;
+    }
+
+    async function loadFile(index) {
+      const item = CODE_PAGES[index];
+      const language = guessLanguage(item);
+
+      viewerTitle.textContent = item.title;
+      viewerSubtitle.textContent = item.description || "Loading file...";
+      repoMeta.textContent = `${item.owner}/${item.repo} • ${item.ref} • ${item.path}`;
+      frameName.textContent = item.path;
+      frameStatus.textContent = "Loading…";
+      languagePill.textContent = language;
+      openGithub.href = githubBlobUrl(item);
+      openRaw.href = rawUrl(item);
+      codeBlock.className = "";
+      codeBlock.textContent = "Loading…";
+
+      try {
+        const response = await fetch(apiUrl(item), {
+          headers: { "Accept": "application/vnd.github+json" }
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API returned ${response.status}`);
+        }
+
+        const data = await response.json();
+        let content = "";
+
+        if (data.encoding === "base64" && typeof data.content === "string") {
+          content = decodeBase64Utf8(data.content);
+        } else if (typeof data.content === "string") {
+          content = data.content;
+        } else {
+          throw new Error("This file could not be displayed as text.");
+        }
+
+        renderHighlightedCode(content + '\n' + lic, language);
+        viewerSubtitle.textContent = item.description || "Loaded.";
+        frameStatus.textContent = "Loaded";
+        if (window.innerWidth > 900) {
+          setFilePanel(false);
+        }
+      } catch (error) {
+        codeBlock.className = "";
+        codeBlock.textContent =
+`Could not load this file.
+
+Possible reasons:
+- the repository is private
+- the path or branch name is wrong
+- the file is too large for this lightweight viewer
+- GitHub API rate limits were hit
+
+Details: ${error.message}`;
+        viewerSubtitle.textContent = "The file could not be loaded.";
+        frameStatus.textContent = "Error";
+      }
+    }
+
+    const filePanel = document.querySelector(".file-panel");
+    const codeMainLayout = document.querySelector(".code-main-layout");
+    const toggleFiles = document.getElementById("toggleFiles");
+
+    function setFilePanel(open) {
+      const desktop = window.innerWidth > 900;
+
+      if (desktop) {
+        filePanel.classList.toggle("collapsed-desktop", !open);
+        codeMainLayout.classList.toggle("files-hidden", !open);
+      } else {
+        filePanel.classList.toggle("collapsed-mobile", !open);
+      }
+
+      toggleFiles.textContent = open ? "Hide Files" : "Browse Files";
+    }
+
+    toggleFiles.addEventListener("click", () => {
+      const desktop = window.innerWidth > 900;
+      const isClosed = desktop
+        ? codeMainLayout.classList.contains("files-hidden")
+        : filePanel.classList.contains("collapsed-mobile");
+
+      setFilePanel(isClosed);
+    }, { signal });
+
+    window.addEventListener("resize", () => {
+      filePanel.classList.remove("collapsed-desktop", "collapsed-mobile");
+      codeMainLayout.classList.remove("files-hidden");
+
+      if (window.innerWidth > 900) {
+        toggleFiles.textContent = "Hide Files";
+      } else {
+        toggleFiles.textContent = "Browse Files";
+      }
+    });
+
+    codeSearch.addEventListener("input", () => renderList(codeSearch.value), { signal });
+    document.getElementById("copyCode").addEventListener("click", () => {
+      const text = Array.from(document.querySelectorAll(".line-text"))
+        .map(e => e.textContent)
+        .join('\n');
+
+      navigator.clipboard.writeText(text);
+    }, { signal });
+
+    renderList();
+    loadFile(currentIndex);
+  </script>
+  <div class="page-transition" aria-hidden="true"></div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

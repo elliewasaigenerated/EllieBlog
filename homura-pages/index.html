@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homura</title>
+  <meta
+    name="description"
+    content="Standalone Homura chess app prepared for Cloudflare Pages deployment."
+  />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/vendor/chessboard/css/chessboard-1.0.0.min.css" />
+  <link rel="stylesheet" href="assets/css/homura.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell homura-nav" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg" alt="Ellie Was AI Generated logo" />
+        <a class="brand" href="/">Homura</a>
+      </div>
+      <div class="nav-links homura-nav-links">
+        <a href="https://ellie-was-ai-generated.net/">Back to main site</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="homura-page shell">
+    <section class="page-hero page-header homura-hero" style="--hero-image: url('../img/homura-hdr.png'); --hero-position: center 45%;">
+      <div class="page-hero-parallax"></div>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <h1>Homura</h1>
+        <p class="hero-subtitle homura-subtitle">
+          A rollout hybrid chess engine
+        </p>
+      </div>
+    </section>
+
+    <section class="homura-layout">
+      <section class="panel board-panel">
+        <div class="board-head">
+          <div>
+            <h2>Board</h2>
+            <div class="status-label">You play White. Homura plays Black.</div>
+          </div>
+          <div class="board-actions">
+            <button id="undoBtn" class="button ghost" type="button">Undo last ply</button>
+            <button id="resetBtn" class="button hidden" type="button">Reset game</button>
+          </div>
+        </div>
+
+        <div class="board-shell">
+          <div id="board"></div>
+        </div>
+        <div class="board-note">
+          Drag with a mouse, or tap a white piece and then its destination on touchscreens. Queen promotions only.
+        </div>
+      </section>
+
+      <aside class="status-panel">
+        <section class="status-card">
+          <h3>Game state</h3>
+          <div class="status-grid">
+            <div class="status-line">
+              <span class="status-label">Page state</span>
+              <span id="pageState" class="pill">Loading runtime</span>
+            </div>
+            <div class="status-line">
+              <span class="status-label">Turn</span>
+              <span id="turnStatus" class="status-value">White to move</span>
+            </div>
+            <div class="status-line">
+              <span class="status-label">Status</span>
+              <span id="gameStatus" class="status-value">Loading dependencies</span>
+            </div>
+            <div class="status-line">
+              <span class="status-label">FEN</span>
+              <span id="fenStatus" class="status-value">-</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="eval-card">
+          <h3>Evaluation</h3>
+          <div class="chart-wrap">
+            <canvas id="evalChart" aria-label="Engine evaluation graph"></canvas>
+          </div>
+          <p class="engine-note" id="engineNote">
+            Positive values favor white. Negative values favor black.
+          </p>
+        </section>
+
+        <section class="status-card">
+          <h3>Move history</h3>
+          <div id="moves" class="moves">No moves yet.</div>
+        </section>
+
+        <section class="status-card">
+          <h3>WASM Runtime</h3>
+          <div class="status-grid">
+            <div class="status-line">
+              <span class="status-label">Engine</span>
+              <span id="runtimeStatus" class="status-value">Checking dependencies</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>You are now entering the uncanny valley. Population: Ellie.</p>
+  </footer>
+
+  <script src="assets/vendor/jquery/jquery-3.7.1.min.js"></script>
+  <script src="assets/vendor/chessboard/js/chessboard-1.0.0.min.js"></script>
+  <script src="assets/vendor/chartjs/chart.umd.4.4.1.min.js"></script>
+  <script src="assets/vendor/chessjs/chess-0.10.2.js"></script>
+  <script src="assets/js/homura-parallax.js"></script>
+  <script src="assets/js/homura-app.js"></script>
+</body>
+</html>

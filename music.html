@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music | Ellie Was AI Generated</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* Shared header/nav styles come from assets/css/style.css.
+       Inline styles below are page-specific for the music layout only. */
+    :root{
+      --bg:#0d0d0d; --bg2:#131313; --panel:#171717; --panel2:#1f1f1f;
+      --text:#f4f4f4; --muted:#b7b7b7; --border:#2f2f2f;
+      --accent:#c86428; --accent-soft:rgba(200,100,40,.14);
+      --shadow:0 16px 42px rgba(0,0,0,.34); --radius:24px; --max:1220px;
+    }
+
+    .iframe-container {
+      position: relative;
+      /* Define size for container */
+      width: 100%;
+      height: 400px;
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 350;
+      /* The iframe content will blend with the overlay below */
+      mix-blend-mode: difference; /* This blend mode works well for inverting or darkening colors while maintaining contrast */
+    }
+
+    .dark-overlay {
+      position: absolute;
+      top: 76.51%;
+      left: 0;
+      width: 100%;
+      height: 23.49%;
+      /* background-color: black; */
+      backdrop-filter:invert(100%); 
+      /*opacity: 0.7; /* Adjust opacity to control the level of darkness */
+      pointer-events: none; /* Allows interaction with the iframe below */
+    }
+
+    /* .eyebrow {
+      margin: 0 0 1rem;
+      color: #ffd0a9;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+    } */
+
+    /* .eyebrow h1 */
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;padding:0;
+      background:radial-gradient(circle at top, rgba(200,100,40,.08), transparent 28%), linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+      color:var(--text); font-family:"Josefin Sans",system-ui,sans-serif;
+    }
+    a{color:inherit;text-decoration:none}
+    /* .page{min-height:100vh;padding:26px 18px 50px} */
+    .wrap{max-width:var(--max);margin:0 auto}
+/* .hero{
+      padding:44px 28px 34px;
+      /* background:linear-gradient(180deg,rgba(23,23,23,.95),rgba(16,16,16,.98)), var(--panel);
+      box-shadow:var(--shadow);text-align:center;
+      min-height: 42vh;
+      display: grid;
+      background-image:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.76)),
+        url('assets/img/music-hdr.png');
+      background-size: cover;
+      justify-items: center;
+      background-repeat: no-repeat;
+      background-position: center 70%;
+      border-radius:var(--radius);
+
+      margin-bottom: 1.5rem;
+    } */
+    /* .eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.18em;font-size:.76rem;margin-bottom:14px} */
+    /* h1{margin:0;font-family:"Righteous",system-ui,sans-serif;font-size:clamp(2.4rem,6vw,4.6rem);line-height:1} */
+    .subtitle{max-width:780px;margin:16px auto 0;color:var(--muted);line-height:1.65;font-size:clamp(1rem,2vw,1.12rem)}
+    .section{
+      margin-top:24px;border:1px solid #011b21;border-radius:28px;
+      background:linear-gradient(180deg, #02303656, var(--bg) 90%);
+      box-shadow:var(--shadow);padding:24px;
+    }
+    .section-head{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:16px;flex-wrap:wrap}
+    .section-title{margin:0;font-family:"Righteous",system-ui,sans-serif;font-size:clamp(1.4rem,3vw,2rem); color:rgb(69, 210, 205)}
+    .section-copy{color:var(--muted);line-height:1.6;max-width:760px}
+    .section-switch{display:flex;justify-content:center;margin:0 0 1.5rem}
+    .section-switch__rail{display:inline-flex;flex-wrap:wrap;gap:0.65rem;padding:0.55rem;border:1px solid #0a3c47;border-radius:999px;background:linear-gradient(180deg, rgba(2, 48, 54, 0.42), rgba(7, 18, 20, 0.86));box-shadow:var(--shadow)}
+    .section-switch__button{display:inline-flex;align-items:center;justify-content:center;padding:0.7rem 1.15rem;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgb(148, 206, 204);font:inherit;font-family:"Righteous",system-ui,sans-serif;letter-spacing:.02em;cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease}
+    .section-switch__button:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#d9ffff}
+    .section-switch__button.is-active{background:rgba(69, 210, 205, 0.16);border-color:rgba(69, 210, 205, 0.34);color:#d9ffff}
+    .playlist-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:16px}
+    .playlist-card,.track-card{background:linear-gradient(180deg, #02303696, var(--bg) 70%);border:1px solid #046f87;border-radius:22px;padding:16px;transition:transform .18s ease,border-color .18s ease}
+    .playlist-card:hover,.track-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+    .playlist-label,.track-label{color:rgb(69, 210, 205);text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;margin-bottom:8px}
+    .playlist-title,.track-title{color:rgb(148, 206, 204);margin:0 0 10px;font-size:1.18rem;font-weight:600}
+    .playlist-note,.track-note{color:rgb(15, 225, 218);line-height:1.55;margin:0 0 14px;min-height:48px}
+    .playlist-actions{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:0 0 14px;flex-wrap:wrap}
+    .playlist-action{display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1rem;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text);font:inherit;font-size:.92rem;cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+    .playlist-action:hover{transform:translateY(-1px);border-color:var(--accent);background:var(--accent-soft)}
+    .playlist-action.is-active{background:var(--accent);border-color:var(--accent);color:#160d07}
+    iframe.spotify,.spotify-embed{width:100%;min-height:352px;border:0;border-radius:16px;background:#121212}
+    .track-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:16px}
+    .track-embed{width:100%;height:166px;border:0;border-radius:16px;background:#111}
+    .original-intro{max-width:1070px;}
+    .original-subtitle{margin:0 0 1rem;color:rgb(148, 206, 204);font-size:1.22rem;font-weight:600;line-height:1.45;}
+    .original-meta-outside{width:84.4vh;margin-left: auto;margin-right: auto;}
+    .original-meta{display:grid;gap:0.55rem;max-width:1080px;justify-content:center;place-items:center; place-self:center;}
+    .original-meta-row{display:flex;flex-wrap:wrap;gap:0.45rem;color:rgb(15, 225, 218);line-height:.80;}
+    .original-meta-label{color:rgb(148, 206, 204);font-family:"Righteous",system-ui,sans-serif;letter-spacing:.04em}
+    .track-card{display:grid;grid-template-rows:auto auto auto 1fr;align-content:start}
+    .track-card .track-title{min-height:0}
+    .track-card .track-note{min-height:48px}
+    .track-placeholder{display:grid;place-items:center;min-height:166px;padding:0.7rem;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.02);color:var(--muted);text-align:center;line-height:1.55;overflow:hidden}
+    .track-placeholder--embed{padding:0.55rem;border-radius:16px;background:rgba(255,255,255,.018)}
+    .track-placeholder--embed iframe{display:block;width:100%;border:0;border-radius:12px}
+    .track-placeholder--embed > div{margin-top:0.35rem}
+    .tips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+    .tip{border:1px solid var(--border);border-radius:20px;background:rgba(255,255,255,.02);padding:16px}
+    .tip h3{margin:0 0 8px;font-size:1rem;font-weight:600}
+    .tip p{margin:0;color:var(--muted);line-height:1.55}
+    code{background:#202020;border:1px solid var(--border);border-radius:8px;padding:2px 6px;color:#fff;font-size:.92em}
+    footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:22px;padding-bottom:4px}
+    @media (max-width:900px){.playlist-grid,.track-grid,.tips{grid-template-columns:1fr}.section-switch{justify-content:stretch}.section-switch__rail{width:100%;justify-content:center}.section-switch__button{flex:1 1 220px}}
+    @media (max-width:640px){
+      .page{padding-inline:12px}.hero,.section{padding:18px}
+}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg">
+          <a href="index.html"></a>
+        </img>
+        <a class="brand" href="index.html">Ellie Was AI Generated</a>
+      </div>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="about.html">About</a>
+        <a href="music.html" class="active">Music</a>
+        <a href="code.html">Code</a>
+        <a href="https://homuraapp.elliewasaigenerated.workers.dev" target="_blank" rel="noopener noreferrer" data-homura-app-link>Homura</a>
+        <a href="anime.html">Anime</a>
+        <a href="notebook.html">Blog</a>
+      </div>
+    </nav>
+  </header>
+  <main class="page shell">
+    <section class="page-hero page-header" style="--hero-image: url('../img/music-hdr.png'); --hero-position: center 70%;">
+      <div class="page-hero-parallax"></div>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <div class="eyebrow">Playlists and Original Music</div>
+        <h1>Music</h1>
+      </div>
+    </section>
+    <div class="wrap">
+      <nav class="section-switch" aria-label="Music sections">
+        <div class="section-switch__rail" role="tablist" aria-label="Music sources">
+          <button class="section-switch__button is-active" type="button" role="tab" aria-selected="true" aria-controls="music-section-spotify" data-audio-nav="spotify">Spotify Playlists</button>
+          <button class="section-switch__button" type="button" role="tab" aria-selected="false" aria-controls="music-section-original" data-audio-nav="original">Original Tracks</button>
+        </div>
+      </nav>
+      <section class="section" id="music-section-spotify" data-audio-panel="spotify">
+        <div class="section-head">
+          <div class="original-intro">
+            <h2 class="section-title" align="center">Featured Playlists</h2>
+          </div>
+        </div>
+
+        <div class="playlist-grid">
+
+          <article class="playlist-card">
+            <div class="playlist-label">Preem Cyberpunk Vibes</div>
+            <h3 class="playlist-title">Premium vibes for your Night City commute</h3>
+            <p class="playlist-note">Need something to distract from the crushing weight of urban hyper-capitalism? I got you, choom.</p>
+            <div class="playlist-actions">
+              <button class="playlist-action" type="button" data-pin-spotify data-spotify-type="playlist" data-spotify-id="66ZsvO5wVeZZp4ScMscgBa" data-spotify-title="Preem Cyberpunk Vibes" data-spotify-artists="Persistent Spotify playlist" data-spotify-status="Pinned from the Music page. This playlist will stay with you while you browse." data-spotify-url="https://open.spotify.com/playlist/66ZsvO5wVeZZp4ScMscgBa">Pin to persistent player</button>
+            </div>
+            <div class="spotify-embed" data-spotify-uri="spotify:playlist:66ZsvO5wVeZZp4ScMscgBa" data-spotify-theme="dark"></div>
+          </article>
+
+          <article class="playlist-card">
+            <div class="playlist-label">Ballmer Peak</div>
+            <h3 class="playlist-title">Hack time</h3>
+            <p class="playlist-note">"So we're going to hack this three and a half inch floppy disk to the year 2005..."</p>
+            <div class="playlist-actions">
+              <button class="playlist-action" type="button" data-pin-spotify data-spotify-type="playlist" data-spotify-id="0KoxQouoU8bg7Fh5EBAv90" data-spotify-title="Ballmer Peak" data-spotify-artists="Persistent Spotify playlist" data-spotify-status="Pinned from the Music page. This playlist will stay with you while you browse." data-spotify-url="https://open.spotify.com/playlist/0KoxQouoU8bg7Fh5EBAv90">Pin to persistent player</button>
+            </div>
+            <div class="spotify-embed" data-spotify-uri="spotify:playlist:0KoxQouoU8bg7Fh5EBAv90" data-spotify-theme="dark"></div>
+          </article>
+
+          <article class="playlist-card">
+            <div class="playlist-label">Pop Piano</div>
+            <h3 class="playlist-title">Chill</h3>
+            <p class="playlist-note">I want you to lose like I lose when I play... what could have been.</p>
+            <div class="playlist-actions">
+              <button class="playlist-action" type="button" data-pin-spotify data-spotify-type="playlist" data-spotify-id="3XifAWcH5j8Fiusor6LvAN" data-spotify-title="Pop Piano" data-spotify-artists="Persistent Spotify playlist" data-spotify-status="Pinned from the Music page. This playlist will stay with you while you browse." data-spotify-url="https://open.spotify.com/playlist/3XifAWcH5j8Fiusor6LvAN">Pin to persistent player</button>
+            </div>
+            <div class="spotify-embed" data-spotify-uri="spotify:playlist:3XifAWcH5j8Fiusor6LvAN" data-spotify-theme="dark"></div>
+          </article>
+
+          <article class="playlist-card">
+            <div class="playlist-label">Believe Me</div>
+            <h3 class="playlist-title">Time to lock in (and save Mayuri)</h3>
+            <p class="playlist-note">A million deadlines coming up? Lock in, chads.</p>
+            <div class="playlist-actions">
+              <button class="playlist-action" type="button" data-pin-spotify data-spotify-type="playlist" data-spotify-id="0n11y9dzuSnGyq5Jou5A7v" data-spotify-title="Believe Me" data-spotify-artists="Persistent Spotify playlist" data-spotify-status="Pinned from the Music page. This playlist will stay with you while you browse." data-spotify-url="https://open.spotify.com/playlist/0n11y9dzuSnGyq5Jou5A7v">Pin to persistent player</button>
+            </div>
+            <div class="spotify-embed" data-spotify-uri="spotify:playlist:0n11y9dzuSnGyq5Jou5A7v" data-spotify-theme="dark"></div>
+          </article>
+
+          <article class="playlist-card">
+            <div class="playlist-label">海辺の葬列</div>
+            <h3 class="playlist-title">Sleep, you've done enough</h3>
+            <p class="playlist-note">When the world is impossibly vast... Make it small.</p>
+            <div class="playlist-actions">
+              <button class="playlist-action" type="button" data-pin-spotify data-spotify-type="playlist" data-spotify-id="292scsolJl7LU09t2GC1uB" data-spotify-title="Sleep, you've done enough" data-spotify-artists="Persistent Spotify playlist" data-spotify-status="Pinned from the Music page. This playlist will stay with you while you browse." data-spotify-url="https://open.spotify.com/playlist/292scsolJl7LU09t2GC1uB">Pin to persistent player</button>
+            </div>
+            <div class="spotify-embed" data-spotify-uri="spotify:playlist:292scsolJl7LU09t2GC1uB" data-spotify-theme="dark"></div>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="section original-section" id="music-section-original" data-audio-panel="original" hidden>
+        <div class="section-head">
+          <div class="original-intro">
+            <h2 class="section-title" align="center">Original Tracks</h2>
+            <!-- <p class="original-subtitle" align="center">Written and produced by Yours Truly</p>
+            <div class="original-meta-outside">
+              <div class="original-meta">
+                <div class="original-meta-row"><span class="original-meta-label">Gen AI:</span><span>Nope</span></div>
+                <div class="original-meta-row"><span class="original-meta-label">DAW:</span><span>FL Studio</span></div>
+                <div class="original-meta-row"><span class="original-meta-label">Genre:</span><span>Science</span></div>
+                <div class="original-meta-row"><span class="original-meta-label">Sounds:</span><span>Spitfire, Omnisphere, Komplete, Splice stuff, VSL</span></div>
+                <div class="original-meta-row"><span class="original-meta-label">Mixing:</span><span>FabFilter</span></div>
+                <div class="original-meta-row"><span class="original-meta-label">Mastering:</span><span>Ozone</span></div>
+                <div class="original-meta-row"><span class="original-meta-label">Classical Instruments:</span><span>MIDI automated</span></div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+
+        <div class="track-grid">
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2201343635&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Still See You In Everything</h3>
+            <p class="track-note">In memory of my younger sister, Emily (Still a work in progress, best part: 1:38-end).</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2201343635&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/still-see-you-in-everything" title="Still See You In Everything (v1.0)" target="_blank" style="color: #cccccc; text-decoration: none;">Still See You In Everything (v1.0)</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2183255659&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">As Time Went On</h3>
+            <p class="track-note">How to stay alive for 25 years when you are literally on fire.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2183255659&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/as-time-went-on" title="As Time Went On" target="_blank" style="color: #cccccc; text-decoration: none;">As Time Went On</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2141506050&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Just Drive</h3>
+            <p class="track-note">In memory of my older sister, Sarah (Best part: 1:59-end).</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2141506050&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/just-drive" title="Just Drive" target="_blank" style="color: #cccccc; text-decoration: none;">Just Drive</a></div>
+            </div>
+          </article>
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2040872136&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Deep Field</h3>
+            <p class="track-note">In memory of my parents, John and Carla.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2040872136&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/deep-field" title="Deep Field (v0)" target="_blank" style="color: #cccccc; text-decoration: none;">Deep Field (v0)</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2124909534&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Nepenthe</h3>
+            <p class="track-note">Respite and nepenthe. A song inspired by Haymitch.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2124909534&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/nepenthe" title="Nepenthe" target="_blank" style="color: #cccccc; text-decoration: none;">Nepenthe</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2139390651&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Midnight Burn</h3>
+            <p class="track-note">When you pull an all-nighter in the library to study for an exam due at 11AM.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2139390651&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/midnight-burn" title="Midnight Burn" target="_blank" style="color: #cccccc; text-decoration: none;">Midnight Burn</a></div>
+            </div>
+          </article>
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2132173566&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Maple</h3>
+            <p class="track-note">(Piano) An improvisation that is probably a mess, but I like it.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2132173566&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/maple_reverb" title="Maple (Haunted Reverb Version)" target="_blank" style="color: #cccccc; text-decoration: none;">Maple (Haunted Reverb Version)</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2115879846&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Come Find Me When You Wake Up</h3>
+            <p class="track-note">"SPAAAAAAAAAAAAAAAAAAAAAACE!" (Space Core - Portal 2). A song of mine that I reproduce every few years.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2115879846&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/come-find-me-when-you-wake-up" title="Come Find Me When You Wake Up" target="_blank" style="color: #cccccc; text-decoration: none;">Come Find Me When You Wake Up</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2003750559&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Memento Vivere</h3>
+            <p class="track-note">(Orchestra) You too must live.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2003750559&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/memento-vivere" title="Memento Vivere" target="_blank" style="color: #cccccc; text-decoration: none;">Memento Vivere</a></div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1966358907&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Sea Change</h3>
+            <p class="track-note">(Strings) Started on this project in 2015.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1966358907&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/sea-change" title="Sea Change" target="_blank" style="color: #cccccc; text-decoration: none;">Sea Change</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1940643527&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">Dot</h3>
+            <p class="track-note">"'Where should we go?' Cheng Xin muttered. 'Go find them,' Luo Ji said." (Liu Cixin - Death's End).</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1940643527&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/dot-go-find-them" title="Dot [Go Find Them]" target="_blank" style="color: #cccccc; text-decoration: none;">Dot [Go Find Them]</a></div>
+            </div>
+          </article>
+
+          <article class="track-card" data-soundcloud-mini-embed="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1835572617&color=%2300ffff&inverse=true&auto_play=false&show_user=true">
+            <div class="track-label">A Scientist</div>
+            <h3 class="track-title">El Psy Kongree</h3>
+            <p class="track-note">(Piano) The base madness necessary to pursue post-secondary education in STEM with no high school diploma.</p>
+            <div class="track-placeholder track-placeholder--embed">
+              <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" data-embed-src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1835572617&color=%2300ffff&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/sciency" title="A Scientist" target="_blank" style="color: #cccccc; text-decoration: none;">A Scientist</a> · <a href="https://soundcloud.com/sciency/el-psy-kongree" title="El Psy Kongree" target="_blank" style="color: #cccccc; text-decoration: none;">El Psy Kongree</a></div>
+          </article>
+        </div>
+      </section>
+      <footer class="site-footer">
+        <p>You are now entering the uncanny valley. Population: Ellie.</p>
+      </footer>
+    </div>
+  </main>
+  <div class="page-transition" aria-hidden="true"></div>
+  <script type="module">
+    (async () => {
+      const pageController = new AbortController();
+      const { signal } = pageController;
+      window.__ELLIE_PAGE_CLEANUP = () => pageController.abort();
+
+      const spotifyButtons = Array.from(document.querySelectorAll("[data-pin-spotify]"));
+      const embedSlots = Array.from(document.querySelectorAll(".spotify-embed"));
+      const embedControllers = [];
+      const sectionButtons = Array.from(document.querySelectorAll("[data-audio-nav]"));
+      const audioPanels = Array.from(document.querySelectorAll("[data-audio-panel]"));
+      const allPinButtons = [];
+
+      function embedsAllowed() {
+        return window.EllieEmbedConsent?.isAllowed?.() !== false;
+      }
+
+      function embedPlaceholder(title, body) {
+        return window.EllieEmbedConsent?.createPlaceholder?.({ title, body }) || `
+          <div class="embed-placeholder">
+            <div class="embed-placeholder__title">${title}</div>
+            <p class="embed-placeholder__body">${body}</p>
+            <button class="embed-placeholder__button" type="button" data-open-embed-consent>Enable embeds</button>
+          </div>
+        `;
+      }
+
+      function setSpotifyEmbedPlaceholders() {
+        embedSlots.forEach((slot) => {
+          slot.innerHTML = embedPlaceholder(
+            "Spotify embed disabled",
+            "Accept third-party embeds to load Spotify playlists."
+          );
+        });
+      }
+
+      function applySoundCloudEmbedConsentState() {
+        const soundCloudPlaceholders = Array.from(document.querySelectorAll('.track-placeholder--embed'));
+
+        soundCloudPlaceholders.forEach((placeholder) => {
+          const frame = placeholder.querySelector('iframe');
+          if (!frame) return;
+
+          const storedSrc = frame.dataset.embedSrc || frame.getAttribute('src') || '';
+          const blockedState = placeholder.querySelector('.embed-placeholder');
+
+          if (embedsAllowed()) {
+            if (storedSrc && !frame.getAttribute('src')) {
+              frame.setAttribute('src', storedSrc);
+            }
+            frame.hidden = false;
+            blockedState?.remove();
+            return;
+          }
+
+          if (frame.getAttribute('src')) {
+            frame.dataset.embedSrc = frame.getAttribute('src') || '';
+          }
+
+          frame.removeAttribute('src');
+          frame.hidden = true;
+
+          if (!blockedState) {
+            placeholder.insertAdjacentHTML(
+              'afterbegin',
+              embedPlaceholder(
+                'SoundCloud embed disabled',
+                'Accept third-party embeds to load SoundCloud tracks.'
+              )
+            );
+          }
+        });
+      }
+
+      function setActiveSection(sectionName) {
+        const normalized = sectionName === "original" ? "original" : "spotify";
+
+        sectionButtons.forEach((button) => {
+          const isActive = button.dataset.audioNav === normalized;
+          button.classList.toggle("is-active", isActive);
+          button.setAttribute("aria-selected", String(isActive));
+        });
+
+        audioPanels.forEach((panel) => {
+          panel.hidden = panel.dataset.audioPanel !== normalized;
+        });
+
+        const nextHash = normalized === "original" ? "#original-tracks" : "#spotify-playlists";
+        if (window.location.hash !== nextHash) {
+          history.replaceState(history.state, "", nextHash);
+        }
+      }
+
+      function setButtonAudioMetadata(button, provider, id) {
+        button.dataset.audioProvider = provider;
+        button.dataset.audioId = id;
+        button.dataset.pinDefault = button.dataset.pinDefault || "Pin to persistent player";
+        button.dataset.pinActive = button.dataset.pinActive || "Pinned to persistent player";
+      }
+
+      spotifyButtons.forEach((button) => {
+        setButtonAudioMetadata(
+          button,
+          "spotify",
+          `${button.dataset.spotifyType}:${button.dataset.spotifyId}`
+        );
+        allPinButtons.push(button);
+      });
+
+      function updatePinnedState(activeButton) {
+        allPinButtons.forEach((button) => {
+          const defaultLabel = button.dataset.pinDefault || "Pin to persistent player";
+          const activeLabel = button.dataset.pinActive || "Pinned to persistent player";
+          button.classList.toggle("is-active", button === activeButton);
+          button.textContent = button === activeButton ? activeLabel : defaultLabel;
+        });
+      }
+
+      function syncPinnedButtonFromEvent(event) {
+        const embed = event?.detail?.embed;
+        if (!event?.detail?.pinned || !embed?.id) {
+          updatePinnedState(null);
+          return;
+        }
+
+        const provider = embed.provider || "spotify";
+        const embedKey = provider === "soundcloud"
+          ? embed.id
+          : `${embed.type}:${embed.id}`;
+
+        const activeButton = allPinButtons.find(
+          (button) =>
+            button.dataset.audioProvider === provider &&
+            button.dataset.audioId === embedKey
+        );
+
+        updatePinnedState(activeButton || null);
+      }
+
+      function restorePinnedState() {
+        try {
+          const pinned = JSON.parse(localStorage.getItem("ellie_spotify_pinned_player") || "null");
+          if (!pinned?.embed?.id) return;
+
+          const provider = pinned.embed.provider || "spotify";
+          const embedKey = provider === "soundcloud"
+            ? pinned.embed.id
+            : `${pinned.embed.type}:${pinned.embed.id}`;
+
+          const activeButton = allPinButtons.find(
+            (button) =>
+              button.dataset.audioProvider === provider &&
+              button.dataset.audioId === embedKey
+          );
+
+          if (activeButton) {
+            updatePinnedState(activeButton);
+          }
+        } catch (_error) {
+          // Ignore malformed local storage and leave buttons in default state.
+        }
+      }
+
+      function normalizedSpotifyUri(uri) {
+        const parts = typeof uri === "string" ? uri.split(":") : [];
+        if (parts[0] !== "spotify" || !parts[1] || !parts[2]) {
+          return "";
+        }
+
+        return `${parts[0]}:${parts[1]}:${parts[2]}`;
+      }
+
+      function trackSpotifyUri(uri) {
+        const normalized = normalizedSpotifyUri(uri);
+        return normalized.startsWith("spotify:track:") ? normalized : "";
+      }
+
+      function buildSpotifyApi() {
+        if (window.__ELLIE_SPOTIFY_IFRAME_API?.createController) {
+          return Promise.resolve(window.__ELLIE_SPOTIFY_IFRAME_API);
+        }
+
+        if (window.SpotifyIframeApi?.createController) {
+          window.__ELLIE_SPOTIFY_IFRAME_API = window.SpotifyIframeApi;
+          return Promise.resolve(window.SpotifyIframeApi);
+        }
+
+        return new Promise((resolve, reject) => {
+          const existingScript = document.querySelector('script[data-spotify-iframe-api="true"]');
+
+          const timeoutId = window.setTimeout(() => {
+            reject(new Error("Spotify iFrame API timed out while loading."));
+          }, 12000);
+
+          const previousReady = window.onSpotifyIframeApiReady;
+          window.onSpotifyIframeApiReady = (api) => {
+            window.clearTimeout(timeoutId);
+            window.__ELLIE_SPOTIFY_IFRAME_API = api;
+            if (typeof previousReady === "function") {
+              previousReady(api);
+            }
+            resolve(api);
+          };
+
+          if (!existingScript) {
+            const script = document.createElement("script");
+            script.src = "https://open.spotify.com/embed/iframe-api/v1";
+            script.async = true;
+            script.dataset.spotifyIframeApi = "true";
+            script.addEventListener("error", () => {
+              window.clearTimeout(timeoutId);
+              reject(new Error("Spotify iFrame API failed to load."));
+            }, { once: true });
+            document.body.appendChild(script);
+          }
+        });
+      }
+
+      async function initPlaylistEmbeds(spotifyModule) {
+        if (!embedSlots.length) return;
+
+        if (!embedsAllowed()) {
+          setSpotifyEmbedPlaceholders();
+          return;
+        }
+
+        try {
+          const api = await buildSpotifyApi();
+          const syncByController = new WeakMap();
+
+          embedSlots.forEach((slot) => {
+            api.createController(
+              slot,
+              {
+                uri: slot.dataset.spotifyUri,
+                theme: slot.dataset.spotifyTheme || "0",
+              },
+              (controller) => {
+                embedControllers.push(controller);
+
+                const syncTrack = async (event) => {
+                  const playingUri = trackSpotifyUri(event?.data?.playingURI);
+                  if (!playingUri) return;
+
+                  const lastUri = syncByController.get(controller);
+                  if (lastUri === playingUri) return;
+
+                  syncByController.set(controller, playingUri);
+
+                  await spotifyModule.syncSpotifyUriToPersistentPlayer(playingUri, {
+                    artists: "From the playlist embed",
+                    status: "Following the track you started in the Music page embed.",
+                    autoplay: false,
+                  });
+                };
+
+                controller.addListener("playback_started", syncTrack);
+                controller.addListener("playback_update", syncTrack);
+              }
+            );
+          });
+        } catch (error) {
+          console.error("Spotify playlist embeds failed to initialize:", error);
+        }
+      }
+
+      function createSoundCloudButtons(spotifyModule) {
+        const trackCards = Array.from(document.querySelectorAll(".track-card"));
+
+        trackCards.forEach((card) => {
+          const placeholder = card.querySelector(".track-placeholder--embed");
+          const frame = placeholder?.querySelector("iframe");
+          const links = placeholder ? Array.from(placeholder.querySelectorAll("a")) : [];
+          const trackLink = links[links.length - 1];
+          if (!placeholder || !frame || !trackLink) return;
+
+          let actions = card.querySelector(".track-actions");
+          if (!actions) {
+            actions = document.createElement("div");
+            actions.className = "playlist-actions track-actions";
+            card.insertBefore(actions, placeholder);
+          }
+
+          let button = card.querySelector("[data-pin-soundcloud]");
+          if (!button) {
+            button = document.createElement("button");
+            button.type = "button";
+            button.className = "playlist-action";
+            button.dataset.pinSoundcloud = "true";
+            button.textContent = "Pin to persistent player";
+            actions.prepend(button);
+          }
+
+          const title = card.querySelector(".track-title")?.textContent?.trim() || trackLink.textContent.trim() || "SoundCloud track";
+          const artist = card.querySelector(".track-label")?.textContent?.trim() || "SoundCloud";
+          const note = card.querySelector(".track-note")?.textContent?.trim() || "Pinned from the Music page.";
+
+          button.dataset.pinDefault = "Pin to persistent player";
+          button.dataset.pinActive = "Pinned to persistent player";
+          button.dataset.soundcloudTitle = title;
+          button.dataset.soundcloudArtists = artist;
+          button.dataset.soundcloudStatus = note;
+          button.dataset.soundcloudUrl = trackLink.href;
+          button.dataset.soundcloudMiniEmbed = card.dataset.soundcloudMiniEmbed || "";
+          try {
+            const frameUrl = new URL(frame.dataset.embedSrc || frame.getAttribute('src') || '', window.location.href);
+            button.dataset.soundcloudApiUrl = frameUrl.searchParams.get("url") || "";
+          } catch (_error) {
+            button.dataset.soundcloudApiUrl = "";
+          }
+          setButtonAudioMetadata(button, "soundcloud", trackLink.href);
+
+          if (button.dataset.soundcloudBound === "true") {
+            return;
+          }
+
+          button.dataset.soundcloudBound = "true";
+          allPinButtons.push(button);
+          button.addEventListener("click", () => {
+            spotifyModule.pinSoundCloudPlayer({
+              title: button.dataset.soundcloudTitle,
+              artists: button.dataset.soundcloudArtists,
+              status: button.dataset.soundcloudStatus,
+              url: button.dataset.soundcloudUrl,
+              apiTrackUrl: button.dataset.soundcloudApiUrl,
+              customEmbedUrl: button.dataset.soundcloudMiniEmbed,
+              id: button.dataset.audioId,
+            });
+
+            updatePinnedState(button);
+          }, { signal });
+        });
+      }
+
+      async function initPersistentPlaylistButtons() {
+        try {
+          const spotifyImportUrl = new URL("assets/js/spotify-intf.js", window.location.href).toString();
+          const spotify = await import(spotifyImportUrl);
+          await initPlaylistEmbeds(spotify);
+          createSoundCloudButtons(spotify);
+
+          spotifyButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+              spotify.pinSpotifyPlayer({
+                title: button.dataset.spotifyTitle,
+                artists: button.dataset.spotifyArtists,
+                status: button.dataset.spotifyStatus,
+                url: button.dataset.spotifyUrl,
+                embed: {
+                  type: button.dataset.spotifyType,
+                  id: button.dataset.spotifyId,
+                },
+                autoplay: false,
+              });
+
+              updatePinnedState(button);
+            }, { signal });
+          });
+        } catch (error) {
+          console.error("Persistent Spotify playlist controls failed:", error);
+        }
+      }
+
+      sectionButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          setActiveSection(button.dataset.audioNav);
+        }, { signal });
+      });
+
+      setActiveSection(window.location.hash === "#original-tracks" ? "original" : "spotify");
+      applySoundCloudEmbedConsentState();
+      restorePinnedState();
+      await initPersistentPlaylistButtons();
+
+      window.addEventListener("ellie:spotify-pinned-change", syncPinnedButtonFromEvent, { signal });
+      window.addEventListener("ellie:embed-consent-change", (event) => {
+        applySoundCloudEmbedConsentState();
+        if (event.detail?.allowed) {
+          window.location.reload();
+          return;
+        }
+        setSpotifyEmbedPlaceholders();
+      }, { signal });
+
+      signal.addEventListener("abort", () => {
+        embedControllers.forEach((controller) => {
+          try {
+            controller.pause();
+          } catch (_error) {
+            // Ignore cleanup errors from embeds already removed from the DOM.
+          }
+        });
+      }, { once: true });
+    })().catch((error) => {
+      console.error("Music module failed", error);
+    });
+  </script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
