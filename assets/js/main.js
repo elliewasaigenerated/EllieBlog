@@ -448,6 +448,7 @@
 
   function updateActiveNav(pathname) {
     const currentPath = normalizePagePath(pathname);
+    const currentOrigin = window.location.origin;
 
     document.querySelectorAll(".nav-links a").forEach((link) => {
       const href = link.getAttribute("href");
@@ -456,7 +457,13 @@
       let targetPath = null;
 
       try {
-        targetPath = normalizePagePath(new URL(href, window.location.href).pathname);
+        const url = new URL(href, window.location.href);
+        if (url.origin !== currentOrigin) {
+          link.classList.remove("active");
+          return;
+        }
+
+        targetPath = normalizePagePath(url.pathname);
       } catch (_error) {
         return;
       }
