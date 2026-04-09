@@ -562,11 +562,16 @@
       }
 
       .file-panel {
-        overflow: visible;
+        max-height: min(68vh, 38rem);
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
 
       .file-panel-inner {
         min-height: 0;
+        overflow: visible;
       }
 
       .code-search {
@@ -607,11 +612,8 @@
         flex-direction: column;
         gap: 0.7rem;
         width: 100%;
-        max-height: min(56vh, 32rem);
-        overflow-x: hidden;
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
+        max-height: none;
+        overflow: visible;
         padding: 0.2rem 0.1rem 0.35rem 0;
       }
     }
