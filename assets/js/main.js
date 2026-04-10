@@ -281,10 +281,9 @@
       modal.hidden = true;
       modal.innerHTML = `
         <div class="homura-launch__dialog">
-          <p class="homura-launch__eyebrow">Leaving The SPA</p>
+          <p class="homura-launch__eyebrow">Leaving The Main Site</p>
           <h2 class="homura-launch__title" id="homuraLaunchTitle">Continue to Homura or return to the main site?</h2>
-          <p class="homura-launch__copy" id="homuraLaunchCopy">Homura opens as a dedicated chess app in a separate tab so it can keep the engine runtime headers it needs. If you leave this flow, the persistent player and other single-page site behavior stay behind on the main site tab.</p>
-          <p class="homura-launch__note">Choose continue to open Homura separately, or return to keep browsing with the main site's player and navigation intact.</p>
+          <p class="homura-launch__copy" id="homuraLaunchCopy">Homura opens as a dedicated chess app in a separate tab. If you leave this flow, the persistent player and other single-page site behavior stay behind on the main site tab.</p>
           <div class="homura-launch__actions">
             <button class="homura-launch__button" type="button" data-close-homura-launch>Return to site</button>
             <a class="homura-launch__button homura-launch__button--primary" href="https://homuraapp.elliewasaigenerated.workers.dev" target="_blank" rel="noopener noreferrer" data-homura-launch-continue>Continue to Homura</a>
