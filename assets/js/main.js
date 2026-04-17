@@ -8,6 +8,17 @@
   let enterAnimationTimer = null;
   let navigationSequence = 0;
   let homuraLaunchLastTrigger = null;
+  let pendingEmbedConsentOpen = false;
+
+  const ANALYTICS_MEASUREMENT_ID = "G-R2EQQXDV2Y";
+  const ANALYTICS_SCRIPT_SRC = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_MEASUREMENT_ID}`;
+  const ANALYTICS_CONSENT_KEY = "ellie_analytics_consent";
+  const ANALYTICS_CONSENT_VALUES = {
+    accepted: "accepted",
+    declined: "declined",
+    dismissed: "dismissed",
+  };
+  const ANALYTICS_CONSENT_SESSION_SEEN_KEY = "ellie_analytics_consent_seen_this_session";
 
   const EMBED_CONSENT_KEY = "ellie_embed_consent";
   const EMBED_CONSENT_VALUES = {
@@ -16,6 +27,165 @@
     dismissed: "dismissed",
   };
   const EMBED_CONSENT_SESSION_SEEN_KEY = "ellie_embed_consent_seen_this_session";
+
+  function getStoredAnalyticsConsent() {
+    try {
+      return localStorage.getItem(ANALYTICS_CONSENT_KEY) || "";
+    } catch (_error) {
+      return "";
+    }
+  }
+
+  function analyticsAllowed() {
+    return getStoredAnalyticsConsent() === ANALYTICS_CONSENT_VALUES.accepted;
+  }
+
+  function setStoredAnalyticsConsent(value) {
+    try {
+      if (!value) {
+        localStorage.removeItem(ANALYTICS_CONSENT_KEY);
+        return;
+      }
+
+      localStorage.setItem(ANALYTICS_CONSENT_KEY, value);
+    } catch (_error) {
+      // Ignore storage failures and keep the page usable.
+    }
+  }
+
+  function hasSeenAnalyticsConsentThisSession() {
+    try {
+      return sessionStorage.getItem(ANALYTICS_CONSENT_SESSION_SEEN_KEY) === "true";
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function markAnalyticsConsentSeenThisSession() {
+    try {
+      sessionStorage.setItem(ANALYTICS_CONSENT_SESSION_SEEN_KEY, "true");
+    } catch (_error) {
+      // Ignore storage failures and keep the page usable.
+    }
+  }
+
+  function loadAnalytics() {
+    if (!analyticsAllowed()) return;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function gtag() {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag("js", new Date());
+    window.gtag("config", ANALYTICS_MEASUREMENT_ID);
+
+    if (loadedScriptSrcs.has(ANALYTICS_SCRIPT_SRC)) {
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = ANALYTICS_SCRIPT_SRC;
+    script.dataset.analyticsConsentScript = "true";
+    document.head.appendChild(script);
+    loadedScriptSrcs.add(ANALYTICS_SCRIPT_SRC);
+  }
+
+  function closeAnalyticsConsentDialog() {
+    const modal = document.querySelector("[data-analytics-consent]");
+    if (!modal) return;
+
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  function maybeContinueConsentFlow() {
+    if (pendingEmbedConsentOpen) {
+      pendingEmbedConsentOpen = false;
+      openEmbedConsentDialog();
+      return;
+    }
+
+    if (!hasSeenEmbedConsentThisSession()) {
+      openEmbedConsentDialog();
+    }
+  }
+
+  function dismissAnalyticsConsentDialog() {
+    if (!getStoredAnalyticsConsent()) {
+      setStoredAnalyticsConsent(ANALYTICS_CONSENT_VALUES.dismissed);
+    }
+
+    closeAnalyticsConsentDialog();
+    maybeContinueConsentFlow();
+  }
+
+  function openAnalyticsConsentDialog() {
+    const modal = document.querySelector("[data-analytics-consent]");
+    if (!modal) return;
+
+    markAnalyticsConsentSeenThisSession();
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+  }
+
+  function setAnalyticsConsent(value) {
+    setStoredAnalyticsConsent(value);
+    closeAnalyticsConsentDialog();
+
+    if (value === ANALYTICS_CONSENT_VALUES.accepted) {
+      loadAnalytics();
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("ellie:analytics-consent-change", {
+        detail: {
+          state: getStoredAnalyticsConsent(),
+          allowed: analyticsAllowed(),
+        },
+      })
+    );
+
+    maybeContinueConsentFlow();
+  }
+
+  function ensureAnalyticsConsentUi() {
+    if (document.querySelector("[data-analytics-consent]")) {
+      return;
+    }
+
+    const modal = document.createElement("div");
+    modal.className = "embed-consent";
+    modal.dataset.analyticsConsent = "true";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-hidden", "true");
+    modal.hidden = true;
+    modal.innerHTML = `
+      <div class="embed-consent__dialog">
+        <p class="embed-consent__eyebrow">Privacy Notice</p>
+        <h2 class="embed-consent__title">Google Analytics collects visit data</h2>
+        <p class="embed-consent__copy">This site can use Google Analytics to measure page views and engagement. Accept to enable analytics collection. Otherwise, analytics stays off while the rest of the site remains usable.</p>
+        <div class="embed-consent__actions">
+          <button class="embed-consent__button embed-consent__button--primary" type="button" data-accept-analytics-consent>Accept analytics</button>
+          <button class="embed-consent__button" type="button" data-decline-analytics-consent>Keep analytics off</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        dismissAnalyticsConsentDialog();
+      }
+    });
+
+    modal.querySelector("[data-accept-analytics-consent]")
+      .addEventListener("click", () => setAnalyticsConsent(ANALYTICS_CONSENT_VALUES.accepted));
+    modal.querySelector("[data-decline-analytics-consent]")
+      .addEventListener("click", () => setAnalyticsConsent(ANALYTICS_CONSENT_VALUES.declined));
+  }
 
   function getStoredEmbedConsent() {
     try {
@@ -73,7 +243,7 @@
     window.EllieEmbedConsent = {
       isAllowed: embedsAllowed,
       getState: getStoredEmbedConsent,
-      openDialog: openEmbedConsentDialog,
+      openDialog: requestEmbedConsentDialog,
       createPlaceholder: createEmbedPlaceholder,
     };
   }
@@ -135,6 +305,16 @@
     syncEmbedConsentUiState();
   }
 
+  function requestEmbedConsentDialog() {
+    if (!getStoredAnalyticsConsent()) {
+      pendingEmbedConsentOpen = true;
+      openAnalyticsConsentDialog();
+      return;
+    }
+
+    openEmbedConsentDialog();
+  }
+
   function setEmbedConsent(value, options = {}) {
     setStoredEmbedConsent(value);
     closeEmbedConsentDialog();
@@ -181,12 +361,12 @@
     document.body.appendChild(modal);
     document.body.appendChild(trigger);
 
-    trigger.addEventListener("click", () => openEmbedConsentDialog());
+    trigger.addEventListener("click", () => requestEmbedConsentDialog());
 
     document.addEventListener("click", (event) => {
       if (event.target.closest("[data-open-embed-consent]")) {
         event.preventDefault();
-        openEmbedConsentDialog();
+        requestEmbedConsentDialog();
       }
     });
 
@@ -203,10 +383,6 @@
 
     syncEmbedConsentApi();
     syncEmbedConsentUiState();
-
-    if (!hasSeenEmbedConsentThisSession()) {
-      openEmbedConsentDialog();
-    }
   }
 
   function closeHomuraLaunchDialog() {
@@ -708,6 +884,7 @@ ${sourceScript.textContent}
 
   function boot() {
     ensurePersistentPlayer();
+    ensureAnalyticsConsentUi();
     ensureEmbedConsentUi();
     ensureHomuraLaunchUi();
     setupMobileNav();
@@ -717,6 +894,13 @@ ${sourceScript.textContent}
     setPageCleanup(window.__ELLIE_PAGE_CLEANUP);
     history.replaceState({ spa: true }, "", window.location.href);
     playEnterAnimation();
+    loadAnalytics();
+
+    if (!hasSeenAnalyticsConsentThisSession()) {
+      openAnalyticsConsentDialog();
+    } else if (!hasSeenEmbedConsentThisSession()) {
+      openEmbedConsentDialog();
+    }
 
     import(new URL("assets/js/spotify-intf.js", window.location.href).toString())
       .then((module) => {
