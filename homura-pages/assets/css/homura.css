@@ -20,9 +20,12 @@
   text-wrap: balance;
 }
 
+.homura-hero {
+  --hero-scale: 1.01;
+}
+
 .homura-hero .page-hero-parallax {
   filter: brightness(0.68) saturate(0.92);
-  transform: translate3d(0, 0, 0) scale(1.01);
 }
 
 .homura-hero .page-hero-overlay {

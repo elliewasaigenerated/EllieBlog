@@ -566,6 +566,8 @@
       const layer = hero.querySelector(".page-hero-parallax, .hero-parallax");
       if (!layer) return;
 
+      const heroScale = getComputedStyle(hero).getPropertyValue("--hero-scale").trim() || "1.06";
+
       hero.dataset.parallaxReady = "true";
 
       let targetX = 0;
@@ -574,13 +576,13 @@
       let currentY = 0;
       let rafId = null;
 
-      layer.style.transform = "translate3d(0, 0, 0) scale(1.06)";
+      layer.style.transform = `translate3d(0, 0, 0) scale(${heroScale})`;
 
       function animate() {
         currentX += (targetX - currentX) * 0.18;
         currentY += (targetY - currentY) * 0.18;
 
-        layer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.06)`;
+        layer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${heroScale})`;
 
         const settled =
           Math.abs(targetX - currentX) < 0.1 &&
@@ -592,7 +594,7 @@
           rafId = null;
           currentX = 0;
           currentY = 0;
-          layer.style.transform = "translate3d(0, 0, 0) scale(1.06)";
+          layer.style.transform = `translate3d(0, 0, 0) scale(${heroScale})`;
           return;
         }
 

@@ -135,7 +135,7 @@
       }
 
       .hero-content {
-        width: min(calc(100% - 440px), 640px);
+        width: min(calc(100% - 370px), 640px);
         margin-inline: 0 auto;
         padding-top: clamp(3rem, 8vh, 5.5rem);
         padding-bottom: clamp(9rem, 18vh, 13rem);
@@ -152,8 +152,28 @@
       }
 
       .status-float {
+        width: min(300px, calc(100% - 2rem));
+        padding: 0.8rem;
+        border-radius: 18px;
         right: clamp(1rem, 3vw, 2rem);
         bottom: clamp(1rem, 3vw, 1.75rem);
+      }
+
+      .status-float__list {
+        max-height: 200px;
+      }
+
+      .status-card {
+        padding: 0.72rem 0.78rem;
+      }
+
+      .status-card__text {
+        font-size: 0.97rem;
+      }
+
+      .status-card__footer,
+      .status-float__meta {
+        font-size: 0.84rem;
       }
     }
 
