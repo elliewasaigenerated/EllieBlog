@@ -18,7 +18,10 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #0d0d0d 0%, #121212 100%);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.965), rgba(0, 0, 0, 0.965)), url("../img/homura-hdr.png"); /*linear-gradient(180deg, #0d0d0d 0%, #121212 100%);*/
   color: var(--text);
   font-family: "Josefin Sans", system-ui, sans-serif;
 }
