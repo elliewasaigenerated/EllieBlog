@@ -574,6 +574,8 @@
       let currentY = 0;
       let rafId = null;
 
+      layer.style.transform = "translate3d(0, 0, 0) scale(1.06)";
+
       function animate() {
         currentX += (targetX - currentX) * 0.18;
         currentY += (targetY - currentY) * 0.18;
