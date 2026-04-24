@@ -129,6 +129,31 @@
       background: rgba(255, 255, 255, 0.025);
     }
 
+    @media (min-width: 901px) and (max-width: 1360px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+        align-items: center;
+        column-gap: clamp(1.25rem, 3vw, 2.25rem);
+        padding-inline: clamp(1rem, 3vw, 2rem);
+      }
+
+      .hero-content {
+        justify-self: start;
+        text-align: left;
+        width: min(100%, 640px);
+        padding-inline: 0;
+      }
+
+      .status-float {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        width: min(360px, 100%);
+        margin: 0;
+        align-self: center;
+      }
+    }
+
     @media (max-width: 900px) {
       .hero {
         min-height: auto;
