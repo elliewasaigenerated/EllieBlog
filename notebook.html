@@ -107,6 +107,11 @@
       gap: 1.25rem;
     }
 
+    .notebook-sections.notebook-sections--single {
+      grid-template-columns: minmax(0, 620px);
+      justify-content: center;
+    }
+
     .notebook-section {
       display: grid;
       gap: 0.55rem;
@@ -661,6 +666,7 @@
         grid.innerHTML = entries.map(noteCardTemplate).join("");
       });
 
+      notebookSections.classList.toggle("notebook-sections--single", totalVisibleSections === 1);
       notebookEmpty.hidden = totalVisibleSections !== 0;
       if (totalVisibleSections === 0 && selectedSections.size === 0) {
         notebookStatus.textContent = "No categories selected";
