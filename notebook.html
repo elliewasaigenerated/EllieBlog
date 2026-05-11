@@ -102,14 +102,15 @@
     }
 
     .notebook-sections {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 1.25rem;
     }
 
-    .notebook-sections.notebook-sections--single {
-      grid-template-columns: minmax(0, 620px);
-      justify-content: center;
+    .notebook-sections > .notebook-section {
+      flex: 1 1 min(100%, 520px);
+      max-width: calc((100% - 1.25rem) / 2);
     }
 
     .notebook-section {
@@ -285,8 +286,8 @@
     }
 
     @media (max-width: 980px) {
-      .notebook-sections {
-        grid-template-columns: 1fr;
+      .notebook-sections > .notebook-section {
+        max-width: 100%;
       }
 
       .notebook-grid {
@@ -666,7 +667,6 @@
         grid.innerHTML = entries.map(noteCardTemplate).join("");
       });
 
-      notebookSections.classList.toggle("notebook-sections--single", totalVisibleSections === 1);
       notebookEmpty.hidden = totalVisibleSections !== 0;
       if (totalVisibleSections === 0 && selectedSections.size === 0) {
         notebookStatus.textContent = "No categories selected";
