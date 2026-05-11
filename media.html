@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>25 years</title>
+  <title>Media</title>
   <style>
     :root {
       --bg: #0f0f0f;
@@ -225,6 +225,40 @@
       z-index: 1;
     }
 
+    .stage-nav {
+      position: absolute;
+      top: 50%;
+      z-index: 4;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      padding: 0 0 0.12rem;
+      border-radius: 999px;
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(10,10,10,0.36);
+      color: var(--text);
+      font-size: 1.8rem;
+      line-height: 1;
+      transform: translateY(-50%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .stage-nav:hover {
+      transform: translateY(-50%) scale(1.04);
+      background: rgba(136, 119, 176, 0.5);
+      border-color: rgba(255,255,255,0.32);
+    }
+
+    .stage-nav--prev {
+      left: 18px;
+    }
+
+    .stage-nav--next {
+      right: 18px;
+    }
+
     .overlay {
       position: absolute;
       inset: auto 0 0 0;
@@ -352,8 +386,7 @@
       padding: 20px 6px 10px;
     }
 
-    .track-line,
-    .track-fill {
+    .track-line {
       position: absolute;
       top: 27px;
       left: 6px;
@@ -364,14 +397,6 @@
 
     .track-line {
       background: rgba(255,255,255,0.12);
-    }
-
-    .track-fill {
-      width: 0%;
-      right: auto;
-      background: linear-gradient(90deg, var(--accent2), #ae5bab);
-      box-shadow: 0 0 14px rgba(184, 40, 200, 0.35);
-      transition: width 0.28s ease;
     }
 
     .milestones {
@@ -552,6 +577,20 @@
         gap: 10px;
       }
 
+      .stage-nav {
+        width: 42px;
+        height: 42px;
+        font-size: 1.55rem;
+      }
+
+      .stage-nav--prev {
+        left: 10px;
+      }
+
+      .stage-nav--next {
+        right: 10px;
+      }
+
       .mile-label {
         font-size: 0.68rem;
       }
@@ -605,6 +644,8 @@
           <div class="stage" id="stage">
             <img id="featuredImageA" class ="featured active" alt="Timeline image">
             <img id="featuredImageB" class ="featured" alt="Timeline image">
+            <button class="stage-nav stage-nav--prev" id="stagePrevBtn" type="button" aria-label="Previous photo">‹</button>
+            <button class="stage-nav stage-nav--next" id="stageNextBtn" type="button" aria-label="Next photo">›</button>
             <div class="overlay">
               <div class="overlay-meta">
                 <div class="overlay-era" id="overlayEra">Era</div>
@@ -652,7 +693,6 @@
         <div class="timeline-bar">
           <div class="track-wrap">
             <div class="track-line"></div>
-            <div class="track-fill" id="trackFill"></div>
             <div class="milestones" id="milestones"></div>
           </div>
         </div>
@@ -673,9 +713,12 @@
     const CONFIG = {
       handle: 'ellie-was-ai-generated.net',
       apiBase: 'https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed',
+      threadBase: 'https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread',
       pageSize: 50,
       maxPages: 4,
-      maxImages: 80
+      maxImages: 80,
+      feedTimeoutMs: 10000,
+      commentDateTimeoutMs: 6000
     };
 
     const featuredImageA = document.getElementById('featuredImageA');
@@ -686,7 +729,6 @@
     const pathText = document.getElementById('pathText');
     const overlayEra = document.getElementById('overlayEra');
     const overlayCounter = document.getElementById('overlayCounter');
-    const trackFill = document.getElementById('trackFill');
     const milestonesEl = document.getElementById('milestones');
     const thumbsEl = document.getElementById('thumbs');
     const monesText = document.getElementById('monesText');
@@ -706,22 +748,15 @@
     let backImage = featuredImageB
     let photos = [];
     let milestones = [];
+    const commentDateCache = new Map();
 
     function clampIndex(index) {
       return Math.max(0, Math.min(index, photos.length - 1));
     }
 
-    function closestMilestoneIndex(imageNumber) {
-      let best = milestones[0]?.index || 1;
-      let smallest = Infinity;
-      for (const item of milestones) {
-        const dist = Math.abs(item.index - imageNumber);
-        if (dist < smallest) {
-          smallest = dist;
-          best = item.index;
-        }
-      }
-      return best;
+    function milestoneIndexForPhoto(photo) {
+      const year = formatYear(photo?.takenAt);
+      return milestones.find((item) => item.label === year)?.index ?? milestones[0]?.index ?? 0;
     }
 
     function renderMilestones() {
@@ -730,9 +765,9 @@
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'milestone';
-        btn.dataset.index = String(item.index - 1);
+        btn.dataset.index = String(item.index);
         btn.innerHTML = `<span class="dot"></span><span class="mile-label">${item.label}</span>`;
-        btn.addEventListener('click', async () => await goTo(item.index - 1), { signal });
+        btn.addEventListener('click', async () => await goTo(item.index), { signal });
         milestonesEl.appendChild(btn);
       });
     }
@@ -754,11 +789,6 @@
       });
     }
 
-    function milestonePercent(imageNumber) {
-      if (photos.length <= 1) return 0;
-      return (imageNumber / (photos.length - 1)) * 100;
-    }
-
     function formatDate(isoString) {
       const date = new Date(isoString);
       if (Number.isNaN(date.valueOf())) return 'Recent post';
@@ -772,6 +802,159 @@
     function formatYear(isoString) {
       const date = new Date(isoString);
       return Number.isNaN(date.valueOf()) ? 'Now' : String(date.getFullYear());
+    }
+
+    function eraForYear(year) {
+      const eras = {
+        '2026': 'Breaking up with AZ',
+        '2025': 'Wrapping up my time at Garmin',
+        '2018': 'Homeless in Portland',
+        '2017': 'Begging for healthcare as someone with no value',
+        '2016': 'Alone in the avenues after losing my family',
+        '2015': 'Norterra'
+      };
+
+      return eras[String(year)] || 'Undefined Era';
+    }
+
+    function normalizeDateParts(year, month = 1, day = 1) {
+      const date = new Date(Number(year), Number(month) - 1, Number(day), 12, 0, 0);
+      return Number.isNaN(date.valueOf()) ? null : date;
+    }
+
+    function parseTimelineDateFromText(text) {
+      const value = String(text || '').trim();
+      if (!value) return null;
+
+      const labeled = value.match(/\b(?:taken|date|photo|timeline|when)\s*[:=-]\s*(\d{4})(?:[-/.](\d{1,2})(?:[-/.](\d{1,2}))?)?\b/i);
+      if (labeled) {
+        return normalizeDateParts(labeled[1], labeled[2] || 1, labeled[3] || 1);
+      }
+
+      const hashtag = value.match(/#(?:photo|date|taken|timeline)[-_]?(\d{4})(?:[-_/.](\d{1,2})(?:[-_/.](\d{1,2}))?)?\b/i);
+      if (hashtag) {
+        return normalizeDateParts(hashtag[1], hashtag[2] || 1, hashtag[3] || 1);
+      }
+
+      const isoLike = value.match(/\b(19\d{2}|20\d{2})(?:[-/.](\d{1,2})(?:[-/.](\d{1,2}))?)?\b/);
+      if (isoLike) {
+        return normalizeDateParts(isoLike[1], isoLike[2] || 1, isoLike[3] || 1);
+      }
+
+      return null;
+    }
+
+    function collectThreadReplies(node, replies = []) {
+      if (!node?.replies || !Array.isArray(node.replies)) return replies;
+
+      node.replies.forEach((reply) => {
+        if (reply?.post) {
+          replies.push(reply.post);
+        }
+        collectThreadReplies(reply, replies);
+      });
+
+      return replies;
+    }
+
+    async function fetchCommentTakenDate(photo) {
+      if (!photo.postUri) return null;
+      if (commentDateCache.has(photo.postUri)) {
+        return commentDateCache.get(photo.postUri);
+      }
+
+      const pending = (async () => {
+        const controller = new AbortController();
+        const abortCommentFetch = () => controller.abort();
+        const timeoutId = window.setTimeout(abortCommentFetch, CONFIG.commentDateTimeoutMs);
+
+        try {
+          signal.addEventListener('abort', abortCommentFetch, { once: true });
+
+          const params = new URLSearchParams({
+            uri: photo.postUri,
+            depth: '2',
+            parentHeight: '0'
+          });
+          const response = await fetch(`${CONFIG.threadBase}?${params.toString()}`, { signal: controller.signal });
+          if (!response.ok) return null;
+
+          const payload = await response.json();
+          const replies = collectThreadReplies(payload.thread);
+          const ownReplies = replies.filter((post) => post?.author?.handle === CONFIG.handle);
+          const candidatePosts = ownReplies.length ? ownReplies : replies;
+
+          for (const post of candidatePosts) {
+            const parsedDate = parseTimelineDateFromText(post?.record?.text);
+            if (parsedDate) return parsedDate;
+          }
+
+          return null;
+        } catch (_error) {
+          return null;
+        } finally {
+          window.clearTimeout(timeoutId);
+          signal.removeEventListener('abort', abortCommentFetch);
+        }
+      })();
+
+      commentDateCache.set(photo.postUri, pending);
+      return pending;
+    }
+
+    function fallbackPostDate(photo) {
+      const date = new Date(photo.createdAt);
+      return Number.isNaN(date.valueOf()) ? null : date;
+    }
+
+    function finalizePhotoOrder(nextPhotos) {
+      return nextPhotos
+        .sort((a, b) => b.sortTime - a.sortTime || a.originalOrder - b.originalOrder)
+        .map((photo, index) => ({
+          ...photo,
+          number: index,
+          title: formatDate(photo.takenAt),
+          era: eraForYear(formatYear(photo.takenAt)),
+          meta: [
+            photo.baseMeta || photo.meta,
+            `Timeline date: ${formatDate(photo.takenAt)}`,
+            `Date source: ${photo.dateSource}`
+          ].filter(Boolean).join('\n')
+        }));
+    }
+
+    function applyFallbackPhotoDates(nextPhotos) {
+      nextPhotos.forEach((photo) => {
+        const postDate = fallbackPostDate(photo) || new Date(0);
+        photo.takenAt = postDate.toISOString();
+        photo.dateSource = 'Bluesky post date';
+        photo.sortTime = postDate.valueOf();
+      });
+
+      return finalizePhotoOrder(nextPhotos);
+    }
+
+    async function enrichCommentDates(nextPhotos) {
+      let cursor = 0;
+      const workers = Array.from({ length: Math.min(10, nextPhotos.length) }, async () => {
+        while (cursor < nextPhotos.length) {
+          const index = cursor;
+          cursor += 1;
+
+          const photo = nextPhotos[index];
+          const commentDate = await fetchCommentTakenDate(photo);
+          const postDate = fallbackPostDate(photo);
+          const sortDate = commentDate || postDate || new Date(0);
+
+          photo.takenAt = sortDate.toISOString();
+          photo.dateSource = commentDate ? 'Bluesky comment' : 'Bluesky post date';
+          photo.hasCommentDate = Boolean(commentDate);
+          photo.sortTime = sortDate.valueOf();
+        }
+      });
+
+      await Promise.all(workers);
+      return finalizePhotoOrder(nextPhotos);
     }
 
     function buildPostUrl(post) {
@@ -804,19 +987,22 @@
 
       if (cursor) params.set('cursor', cursor);
 
-      const response = await fetch(`${CONFIG.apiBase}?${params.toString()}`, { signal });
-      if (!response.ok) {
-        throw new Error(`Bluesky feed request failed with HTTP ${response.status}`);
-      }
+      const controller = new AbortController();
+      const abortFeedFetch = () => controller.abort();
+      const timeoutId = window.setTimeout(abortFeedFetch, CONFIG.feedTimeoutMs);
 
-      return response.json();
-    }
+      try {
+        signal.addEventListener('abort', abortFeedFetch, { once: true });
 
-    function addEras(eras, start, end) {
-      for(var i = start; i < end; ++i)
-      {
-        var key = `${i}`;
-        eras[key] = "Undefined Era";
+        const response = await fetch(`${CONFIG.apiBase}?${params.toString()}`, { signal: controller.signal });
+        if (!response.ok) {
+          throw new Error(`Bluesky feed request failed with HTTP ${response.status}`);
+        }
+
+        return response.json();
+      } finally {
+        window.clearTimeout(timeoutId);
+        signal.removeEventListener('abort', abortFeedFetch);
       }
     }
 
@@ -840,11 +1026,6 @@
           const text = getPostText(item);
           const postUrl = buildPostUrl(post);
 
-          var eras = {"2026":"Leaving AZ for CA", "2025":"Wrapping up my time at Garmin"};
-          // Undefined Eras
-          // addEras(eras, 1996, 2025)
-          addEras(eras, 2027, 2050);
-
           images.forEach((image, imageIndex) => {
             if (nextPhotos.length >= CONFIG.maxImages) return;
 
@@ -856,18 +1037,20 @@
 
             nextPhotos.push({
               number,
+              originalOrder: number,
               src: image.fullsize || image.thumb,
               thumb: image.thumb || image.fullsize,
               title: formatDate(createdAt),
-              era: eras[formatYear(createdAt)],
+              era: eraForYear(formatYear(createdAt)),
               caption: text.replace(/#blog-[^\s]*/g, ''),
               alt: alt || `Bluesky image ${imageIndex + 1} from ${formatDate(createdAt)}`,
               imageAlt: alt,
-              meta: [
+              baseMeta: [
                 aspectRatio ? `Aspect ratio: ${aspectRatio}` : '',
                 images.length > 1 ? `Image ${imageIndex + 1} of ${images.length} in this post` : ''
               ].filter(Boolean).join('\n'),
               postUrl,
+              postUri: post.uri,
               createdAt
             });
           });
@@ -886,11 +1069,11 @@
       const nextMilestones = [];
 
       items.forEach((photo, index) => {
-        const year = formatYear(photo.createdAt);
+        const year = formatYear(photo.takenAt);
         if (seenYears.has(year)) return;
 
         seenYears.add(year);
-        nextMilestones.push({ label: year, index: index + 1 });
+        nextMilestones.push({ label: year, index });
       });
 
       if (nextMilestones.length > 7) {
@@ -922,12 +1105,59 @@
       pathText.appendChild(link);
     }
 
+    function renderTimeline(startIndex = currentIndex) {
+      currentIndex = clampIndex(startIndex);
+      milestones = buildMilestones(photos);
+      renderMilestones();
+      renderThumbs();
+      return updateActiveUI();
+    }
+
     let isTransitioning = false;
+
+    function decodeWithTimeout(image, timeoutMs = 5000) {
+      if (typeof image.decode !== 'function') {
+        return Promise.resolve();
+      }
+
+      return Promise.race([
+        image.decode(),
+        new Promise((resolve) => window.setTimeout(resolve, timeoutMs))
+      ]);
+    }
 
     async function updateActiveUI() {
       if (!photos.length) return;
       const photo = photos[currentIndex];
       const url = photo.src;//`${photo.src}?t=${Date.now()}`;
+
+      titleText.textContent = photo.title;
+      subtitleText.textContent = photo.era;
+      captionText.textContent = photo.caption;
+      renderSourceLink(photo.postUrl);
+      overlayEra.textContent = photo.era;
+      overlayCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+      if(photo.imageAlt)
+      {
+        lbsBox.removeAttribute('hidden', '');
+        lbsText.textContent = photo.imageAlt;
+      }
+      else
+        lbsBox.setAttribute('hidden', '');
+      if(photo.meta)
+      {
+        monesBox.removeAttribute('hidden', '');
+        monesText.textContent = photo.meta;
+      } else
+        monesBox.setAttribute('hidden', '');
+      document.querySelectorAll('.thumb-btn').forEach((el) => {
+        el.classList.toggle('active', Number(el.dataset.index) === currentIndex);
+      });
+
+      const nearest = milestoneIndexForPhoto(photo);
+      document.querySelectorAll('.milestone').forEach((el) => {
+        el.classList.toggle('active', Number(el.dataset.index) === nearest);
+      });
 
       try {
         if (isTransitioning) return;
@@ -941,7 +1171,7 @@
         newFront.src = url;
         newFront.alt = photo.alt || "";
 
-        await newFront.decode();
+        await decodeWithTimeout(newFront);
 
         // Force browser to register the hidden state
         void newFront.offsetWidth;
@@ -967,36 +1197,6 @@
         console.log(e, `couldn't refresh ${url}`);
         isTransitioning = false;
       }
-
-      titleText.textContent = photo.title;
-      subtitleText.textContent = photo.era;
-      captionText.textContent = photo.caption;
-      renderSourceLink(photo.postUrl);
-      overlayEra.textContent = photo.era;
-      overlayCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
-      if(photo.imageAlt)
-      {
-        lbsBox.removeAttribute('hidden', '');
-        lbsText.textContent = photo.imageAlt;
-      }
-      else
-        lbsBox.setAttribute('hidden', '');
-      if(photo.meta)
-      {
-        monesBox.removeAttribute('hidden', '');
-        monesText.textContent = photo.meta;
-      } else
-        monesBox.setAttribute('hidden', '');
-      trackFill.style.width = `${milestonePercent(photo.number)}%`;
-
-      document.querySelectorAll('.thumb-btn').forEach((el) => {
-        el.classList.toggle('active', Number(el.dataset.index) === currentIndex);
-      });
-
-      const nearest = closestMilestoneIndex(photo.number) - 1;
-      document.querySelectorAll('.milestone').forEach((el) => {
-        el.classList.toggle('active', Number(el.dataset.index) === nearest);
-      });
     }
 
     async function goTo(index) {
@@ -1018,6 +1218,8 @@
 
     document.getElementById('nextBtn').addEventListener('click', next, { signal });
     document.getElementById('prevBtn').addEventListener('click', prev, { signal });
+    document.getElementById('stageNextBtn').addEventListener('click', next, { signal });
+    document.getElementById('stagePrevBtn').addEventListener('click', prev, { signal });
 
     document.addEventListener('keydown', async (event) => {
       if (event.key === 'ArrowRight') await next();
@@ -1042,10 +1244,10 @@
 
     (async () => {
       try {
-        photos = await loadBlueskyPhotos();
+        const feedPhotos = await loadBlueskyPhotos();
         if (signal.aborted) return;
 
-        if (!photos.length) {
+        if (!feedPhotos.length) {
           titleText.textContent = 'No public image posts found';
           subtitleText.textContent = `Nothing came back from @${CONFIG.handle}.`;
           captionText.textContent = 'Public Bluesky image posts will appear here once the API returns them.';
@@ -1053,16 +1255,17 @@
           return;
         }
 
-        milestones = buildMilestones(photos);
-        renderMilestones();
-        renderThumbs();
+        showStatus('Reading date tags from Bluesky comments...');
+        photos = await enrichCommentDates(applyFallbackPhotoDates(feedPhotos));
+        if (signal.aborted) return;
+
         hideStatus();
+        await renderTimeline(0);
 
         // if (mediaHero && photos[0]?.src) {
         //   mediaHero.style.setProperty('--hero-image', `linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.78)), url(${JSON.stringify(photos[0].src)})`);
         // }
 
-        await updateActiveUI();
       } catch (error) {
         if (signal.aborted) return;
         console.error('Could not load Bluesky media feed', error);
