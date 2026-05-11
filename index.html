@@ -129,6 +129,60 @@
       background: rgba(255, 255, 255, 0.025);
     }
 
+    @media (min-width: 901px) and (max-width: 1600px) {
+      .hero {
+        min-height: 84vh;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: center;
+        justify-items: center;
+        row-gap: 1.25rem;
+        padding-inline: clamp(1rem, 2.5vw, 2rem);
+      }
+
+      .hero-content {
+        width: min(100%, 760px);
+        align-self: center;
+        margin: 0;
+        padding: clamp(3rem, 7vh, 5rem) clamp(1rem, 2vw, 1.5rem) 1.25rem;
+        text-align: center;
+      }
+
+      .hero-content h1 {
+        max-width: 10ch;
+        margin-inline: auto;
+      }
+
+      .hero-subtitle {
+        width: min(30rem, 100%);
+      }
+
+      .status-float {
+        position: static;
+        width: min(100%, 300px);
+        max-width: 300px;
+        padding: 0.8rem;
+        border-radius: 18px;
+        margin: 0 auto clamp(2rem, 5vh, 3.5rem);
+      }
+
+      .status-float__list {
+        max-height: 200px;
+      }
+
+      .status-card {
+        padding: 0.72rem 0.78rem;
+      }
+
+      .status-card__text {
+        font-size: 0.97rem;
+      }
+
+      .status-card__footer,
+      .status-float__meta {
+        font-size: 0.84rem;
+      }
+    }
+
     @media (max-width: 900px) {
       .hero {
         min-height: auto;

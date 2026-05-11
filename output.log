@@ -1,0 +1,6 @@
+nohup: ignoring input
+Serving HTTPS on 0.0.0.0:8443
+Traceback (most recent call last):
+  File "/home/redbedhed/EllieBlog/https.py", line 19, in <module>
+    context.load_cert_chain(certfile="https/cert.pem", keyfile="https/key.pem")
+FileNotFoundError: [Errno 2] No such file or directory

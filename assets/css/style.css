@@ -139,7 +139,7 @@ h1, h2, h3,
   background-position: center;
   background-repeat: no-repeat;
   will-change: transform;
-  transform: translate3d(0, 0, 0) scale(var(1.06));
+  transform: translate3d(0, 0, 0) scale(1.06);
   transition: none;
 }
 
