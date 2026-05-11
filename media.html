@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>25 years</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --panel: #171717;
+      --panel-2: #1f1f1f;
+      --text: #f5f5f5;
+      --muted: #b8b8b8;
+      --border: #303030;
+      --accent2: #8877b0;
+      --accent2-soft: rgba(131, 64, 130, 0.22);
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+      --content-width: 1220px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top, rgba(200, 100, 40, 0.06), transparent 28%),
+        linear-gradient(180deg, #0b0b0b 0%, #111111 100%);
+      color: var(--text);
+      font-family: "Josefin Sans", system-ui, sans-serif;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      min-height: 100vh;
+      padding: 42px 20px 54px;
+    }
+
+    .wrap {
+      max-width: var(--content-width);
+      margin: 0 auto;
+    }
+
+    .media-hero {
+      position: relative;
+      min-height: 52vh;
+      display: grid;
+      place-items: center;
+      background-image: linear-gradient(180deg, rgba(18, 10, 6, 0.48), rgba(0, 0, 0, 0.76));
+      background-size: cover;
+      background-position: center;
+      overflow: clip;
+      border-radius: var(--radius);
+    }
+
+    .media-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(199, 99, 27, 0.18), transparent 35%),
+        linear-gradient(180deg, rgba(8,8,8,0.15), rgba(8,8,8,0.65));
+    }
+
+    .media-hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+
+    .eyebrow {
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Righteous", system-ui, sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4.75rem);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.1vw, 1.18rem);
+      line-height: 1.55;
+    }
+
+    .media-hero-content {
+      width: min(100%, 940px);
+      min-height: clamp(20rem, 44vh, 30rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(1.4rem, 4vw, 3.1rem);
+    }
+
+    .media-hero-intro {
+      display: grid;
+      justify-items: center;
+      gap: 0.9rem;
+    }
+
+    .media-hero-intro .eyebrow {
+      margin-bottom: 0;
+    }
+
+    .media-hero-intro h1 {
+      max-width: 14ch;
+      text-wrap: balance;
+    }
+
+    .media-hero-copy {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+    }
+
+    .media-hero-quote {
+      max-width: 42rem;
+      margin: 0;
+      color: #e5d4c0;
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .media-hero-copy .subtitle {
+      margin-top: 0;
+      max-width: 52rem;
+      text-align: center;
+    }
+
+    .media-hero-closing {
+      margin: 0;
+      color: #f0dfca;
+      font-size: 1.02rem;
+      text-align: center;
+    }
+
+    #mediaHero .page-hero-overlay {
+      background:
+        radial-gradient(circle at center, rgba(136, 119, 176, 0.24), transparent 36%),
+        linear-gradient(180deg, rgba(8, 8, 8, 0.18), rgba(8, 8, 8, 0.72));
+    }
+
+    .timeline-shell {
+      margin-top: 30px;
+      background: linear-gradient(180deg, var(--accent2-soft), rgba(19, 19, 19, 1) 50%);
+      /* border: 1px solid var(--border); */
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .viewer {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 0;
+      min-height: 400px;
+      /* width: 100%; */
+      height:100%;
+      background: black; /*linear-gradient(180deg, var(--accent2-soft), rgba(19, 19, 19, 0.98) 70%);*/
+      
+      align-items: center;
+      /* justify-items: center; */
+    }
+
+    .timeline-status {
+      padding: 18px 24px 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .timeline-status[hidden] {
+      display: none;
+    }
+
+    .stage {
+      position: relative;
+      /* max-height: 450px;
+      min-height: 450px; */
+      height:100%;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.04), transparent 60%),#090909;
+      overflow: hidden;
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.18)),
+        radial-gradient(circle at center, transparent 45%, rgba(0,0,0,0.28) 100%);
+      pointer-events: none;
+    }
+
+    .featured {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
+      will-change: opacity;
+      z-index: 1;
+    }
+
+    .featured.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .featured:not(.active) {
+      z-index: 1;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 22px 24px 26px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      z-index: 2;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.72) 100%);
+    }
+
+    .overlay-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .overlay-era {
+      color: #ffd9c3;
+      font-size: 0.84rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .overlay-counter {
+      color: rgba(255,255,255,0.82);
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .side {
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      background:linear-gradient(180deg, var(--accent2-soft), rgba(19, 19, 19, 0.98) 70%);
+      border-left: 1px solid var(--border);
+    }
+
+    .meta-block {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .meta-label {
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.72rem;
+      margin-bottom: 8px;
+    }
+
+    .meta-title {
+      font-family: "Righteous", system-ui, sans-serif;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .meta-subtitle {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent2);
+    }
+
+    button.primary {
+      background: linear-gradient(180deg, var(--accent2), #7b3376);
+      border-color: transparent;
+      color: white;
+    }
+
+    .caption-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+    }
+
+    .caption-box p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--muted);
+      font-size: 1rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .caption-box a {
+      color: #ffd4a9;
+    }
+
+    .timeline-bar {
+      padding: 22px 24px 16px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.01);
+    }
+
+    .track-wrap {
+      position: relative;
+      padding: 20px 6px 10px;
+    }
+
+    .track-line,
+    .track-fill {
+      position: absolute;
+      top: 27px;
+      left: 6px;
+      right: 6px;
+      height: 2px;
+      border-radius: 999px;
+    }
+
+    .track-line {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .track-fill {
+      width: 0%;
+      right: auto;
+      background: linear-gradient(90deg, var(--accent2), #fa62ff);
+      box-shadow: 0 0 14px rgba(184, 40, 200, 0.35);
+      transition: width 0.28s ease;
+    }
+
+    .milestones {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      z-index: 1;
+    }
+
+    .milestone {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .milestone:hover {
+      transform: none;
+      border-color: transparent;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.42);
+      background: #151515;
+      box-shadow: 0 0 0 0 rgba(255, 156, 98, 0);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .milestone.active .dot {
+      background: var(--accent2);
+      border-color: #ffb185;
+      transform: scale(1.08);
+      box-shadow: 0 0 0 7px rgba(200, 100, 40, 0.14);
+    }
+
+    .mile-label {
+      font-size: 1.0rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: inherit;
+      white-space: nowrap;
+    }
+
+    .milestone.active .mile-label {
+      color: #fff;
+    }
+
+    .thumbs-wrap {
+      padding: 18px 24px 24px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.015);
+    }
+
+    .thumbs-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .thumbs-title {
+      font-family: "Righteous", system-ui, sans-serif;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .thumbs-hint {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: 12px;
+    }
+
+    .thumb-btn {
+      padding: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #111;
+      position: relative;
+      aspect-ratio: 1 / 1;
+    }
+
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.86;
+      transition: transform 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
+    }
+
+    .thumb-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      pointer-events: none;
+    }
+
+    .thumb-btn:hover img,
+    .thumb-btn.active img {
+      opacity: 1;
+      transform: scale(1.03);
+      filter: saturate(1.03);
+    }
+
+    .thumb-btn.active::after {
+      border-color: #ff85f5a8;
+      box-shadow: inset 0 0 0 1px rgba(233, 133, 255, 0.25), 0 0 0 4px rgba(200, 100, 40, 0.14);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 18px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 980px) {
+      .viewer {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        border-left: 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .stage {
+        min-height: 72vw;
+        max-height: 82vh;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding-inline: 12px;
+      }
+
+      .timeline-shell {
+        border-radius: 22px;
+      }
+
+      .overlay,
+      .side,
+      .timeline-bar,
+      .thumbs-wrap {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .thumbs {
+        grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+        gap: 10px;
+      }
+
+      .mile-label {
+        font-size: 0.68rem;
+      }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <div class="site-menu-title">
+        <img class="logo" src="assets/img/blog-logo.svg">
+          <a href="index.html"></a>
+        </img>
+        <a class="brand" href="index.html">Ellie Was AI Generated</a>
+      </div>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="about.html">About</a>
+        <a href="media.html" class="active">Media</a>
+        <a href="music.html">Music</a>
+        <a href="code.html">Code</a>
+        <a href="https://homuraapp.elliewasaigenerated.workers.dev" target="_blank" rel="noopener noreferrer" data-homura-app-link>Homura</a>
+        <a href="anime.html">Anime</a>
+        <a href="notebook.html">Blog</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page shell">
+    <div class="wrap">
+      <section class="page-hero page-header" id="mediaHero" style="--hero-image: url('../img/sky-hdr.png'); --hero-position: center 20%;">
+        <div class="page-hero-parallax"></div>
+        <div class="page-hero-overlay"></div>
+        <div class="page-hero-content">
+          <!-- <div class="media-hero-intro"> -->
+            <div class="eyebrow">A Life in Reverse</div>
+            <h1>Timeline</h1>
+          <!-- </div> -->
+          <!-- <div class="media-hero-copy"> -->
+          <p class="media-hero-closing">"And you, you’re the same. You fought to the end. You survived. That’s why you’re here now. I think that’s something you should be more proud of." — Asato Asato, "86: Eighty-Six"</p>
+          <!-- </div> -->
+        </div>
+      </section>
+
+      <section class="timeline-shell">
+        <div class="viewer">
+          <div class="stage" id="stage">
+            <img id="featuredImageA" class ="featured active" alt="Timeline image">
+            <img id="featuredImageB" class ="featured" alt="Timeline image">
+            <div class="overlay">
+              <div class="overlay-meta">
+                <div class="overlay-era" id="overlayEra">Era</div>
+                <div class="overlay-counter" id="overlayCounter">1 / 1</div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="side">
+            <div class="meta-block">
+              <div class="meta-label">Current moment</div>
+              <h2 class="meta-title" id="titleText">Loading…</h2>
+              <div class="meta-subtitle" id="subtitleText">Fetching public Bluesky images.</div>
+            </div>
+
+            <div class="controls">
+              <button id="prevBtn" type="button">← Previous</button>
+              <button id="nextBtn" class="primary" type="button">Next →</button>
+            </div>
+
+            <div class="caption-box">
+              <div class="meta-label">Caption</div>
+              <p id="captionText">Optional note.</p>
+            </div>
+
+            <div class="caption-box" id="lbsBox">
+              <div class="meta-label">Image alt text</div>
+              <p id="lbsText">Optional note.</p>
+            </div>
+
+            <div class="caption-box" id="monesBox">
+              <div class="meta-label">Image metadata</div>
+              <p id="monesText">Optional note.</p>
+            </div>
+
+            <div class="caption-box">
+              <div class="meta-label">Source</div>
+              <p id="pathText">1</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="timeline-status" id="timelineStatus" role="status">Loading public Bluesky media...</div>
+
+        <div class="timeline-bar">
+          <div class="track-wrap">
+            <div class="track-line"></div>
+            <div class="track-fill" id="trackFill"></div>
+            <div class="milestones" id="milestones"></div>
+          </div>
+        </div>
+
+        <div class="thumbs-wrap">
+          <div class="thumbs-top">
+            <h3 class="thumbs-title">Moments</h3>
+            <div class="thumbs-hint">Click a thumbnail or use arrow keys</div>
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    const CONFIG = {
+      handle: 'ellie-was-ai-generated.net',
+      apiBase: 'https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed',
+      pageSize: 50,
+      maxPages: 4,
+      maxImages: 80
+    };
+
+    const featuredImageA = document.getElementById('featuredImageA');
+    const featuredImageB = document.getElementById('featuredImageB');
+    const titleText = document.getElementById('titleText');
+    const subtitleText = document.getElementById('subtitleText');
+    const captionText = document.getElementById('captionText');
+    const pathText = document.getElementById('pathText');
+    const overlayEra = document.getElementById('overlayEra');
+    const overlayCounter = document.getElementById('overlayCounter');
+    const trackFill = document.getElementById('trackFill');
+    const milestonesEl = document.getElementById('milestones');
+    const thumbsEl = document.getElementById('thumbs');
+    const monesText = document.getElementById('monesText');
+    const lbsText = document.getElementById('lbsText');
+    const monesBox = document.getElementById('monesBox');
+    const lbsBox = document.getElementById('lbsBox');
+    const timelineStatus = document.getElementById('timelineStatus');
+    const mediaHero = document.getElementById('mediaHero');
+    const pageController = new AbortController();
+    const { signal } = pageController;
+
+    window.__ELLIE_PAGE_CLEANUP = () => pageController.abort();
+
+    let currentIndex = 0;
+    let touchStartX = null;
+    let frontImage = featuredImageA
+    let backImage = featuredImageB
+    let photos = [];
+    let milestones = [];
+
+    function clampIndex(index) {
+      return Math.max(0, Math.min(index, photos.length - 1));
+    }
+
+    function closestMilestoneIndex(imageNumber) {
+      let best = milestones[0]?.index || 1;
+      let smallest = Infinity;
+      for (const item of milestones) {
+        const dist = Math.abs(item.index - imageNumber);
+        if (dist < smallest) {
+          smallest = dist;
+          best = item.index;
+        }
+      }
+      return best;
+    }
+
+    function renderMilestones() {
+      milestonesEl.innerHTML = '';
+      milestones.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'milestone';
+        btn.dataset.index = String(item.index - 1);
+        btn.innerHTML = `<span class="dot"></span><span class="mile-label">${item.label}</span>`;
+        btn.addEventListener('click', async () => await goTo(item.index - 1), { signal });
+        milestonesEl.appendChild(btn);
+      });
+    }
+
+    function renderThumbs() {
+      thumbsEl.innerHTML = '';
+      photos.forEach((photo, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'thumb-btn';
+        btn.dataset.index = String(index);
+        const img = document.createElement('img');
+        img.src = photo.thumb || photo.src;
+        img.alt = photo.alt;
+        img.loading = 'lazy';
+        btn.appendChild(img);
+        btn.addEventListener('click', async () => await goTo(index), { signal });
+        thumbsEl.appendChild(btn);
+      });
+    }
+
+    function milestonePercent(imageNumber) {
+      if (photos.length <= 1) return 0;
+      return (imageNumber / (photos.length - 1)) * 100;
+    }
+
+    function formatDate(isoString) {
+      const date = new Date(isoString);
+      if (Number.isNaN(date.valueOf())) return 'Recent post';
+      return new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      }).format(date);
+    }
+
+    function formatYear(isoString) {
+      const date = new Date(isoString);
+      return Number.isNaN(date.valueOf()) ? 'Now' : String(date.getFullYear());
+    }
+
+    function buildPostUrl(post) {
+      const slug = String(post?.uri || '').split('/').pop();
+      const handle = post?.author?.handle || CONFIG.handle;
+      return slug ? `https://bsky.app/profile/${handle}/post/${slug}` : `https://bsky.app/profile/${handle}`;
+    }
+
+    function getPostText(item) {
+      return item?.post?.record?.text?.trim() || 'No post text provided.';
+    }
+
+    function collectEmbedImages(embed) {
+      if (!embed) return [];
+      if (Array.isArray(embed.images)) return embed.images;
+      if (embed.media) return collectEmbedImages(embed.media);
+      return [];
+    }
+
+    function isOwnPost(item) {
+      return item?.post?.author?.handle === CONFIG.handle && !item?.reason;
+    }
+
+    async function fetchFeedPage(cursor) {
+      const params = new URLSearchParams({
+        actor: CONFIG.handle,
+        filter: 'posts_with_media',
+        limit: String(CONFIG.pageSize)
+      });
+
+      if (cursor) params.set('cursor', cursor);
+
+      const response = await fetch(`${CONFIG.apiBase}?${params.toString()}`, { signal });
+      if (!response.ok) {
+        throw new Error(`Bluesky feed request failed with HTTP ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    function addEras(eras, start, end) {
+      for(var i = start; i < end; ++i)
+      {
+        var key = `${i}`;
+        eras[key] = "Undefined Era";
+      }
+    }
+
+    async function loadBlueskyPhotos() {
+      let cursor = null;
+      let pageCount = 0;
+      const nextPhotos = [];
+
+      while (pageCount < CONFIG.maxPages && nextPhotos.length < CONFIG.maxImages) {
+        const payload = await fetchFeedPage(cursor);
+        const feed = Array.isArray(payload.feed) ? payload.feed : [];
+
+        feed.forEach((item) => {
+          if (nextPhotos.length >= CONFIG.maxImages || !isOwnPost(item)) return;
+
+          const post = item.post;
+          const images = collectEmbedImages(post?.embed);
+          if (!images.length) return;
+
+          const createdAt = post.record?.createdAt || post.indexedAt || '';
+          const text = getPostText(item);
+          const postUrl = buildPostUrl(post);
+
+          var eras = {"2026":"Leaving AZ for CA", "2025":"Wrapping up my time at Garmin"};
+          // Undefined Eras
+          // addEras(eras, 1996, 2025)
+          addEras(eras, 2027, 2050);
+
+          images.forEach((image, imageIndex) => {
+            if (nextPhotos.length >= CONFIG.maxImages) return;
+
+            const number = nextPhotos.length;
+            const alt = image.alt?.trim() || '';
+            const aspectRatio = image.aspectRatio
+              ? `${image.aspectRatio.width} x ${image.aspectRatio.height}`
+              : '';
+
+            nextPhotos.push({
+              number,
+              src: image.fullsize || image.thumb,
+              thumb: image.thumb || image.fullsize,
+              title: formatDate(createdAt),
+              era: eras[formatYear(createdAt)],
+              caption: text.replace(/#blog-[^\s]*/g, ''),
+              alt: alt || `Bluesky image ${imageIndex + 1} from ${formatDate(createdAt)}`,
+              imageAlt: alt,
+              meta: [
+                aspectRatio ? `Aspect ratio: ${aspectRatio}` : '',
+                images.length > 1 ? `Image ${imageIndex + 1} of ${images.length} in this post` : ''
+              ].filter(Boolean).join('\n'),
+              postUrl,
+              createdAt
+            });
+          });
+        });
+
+        cursor = payload.cursor || null;
+        pageCount += 1;
+        if (!cursor) break;
+      }
+
+      return nextPhotos;
+    }
+
+    function buildMilestones(items) {
+      const seenYears = new Set();
+      const nextMilestones = [];
+
+      items.forEach((photo, index) => {
+        const year = formatYear(photo.createdAt);
+        if (seenYears.has(year)) return;
+
+        seenYears.add(year);
+        nextMilestones.push({ label: year, index: index + 1 });
+      });
+
+      if (nextMilestones.length > 7) {
+        const stride = Math.ceil(nextMilestones.length / 7);
+        return nextMilestones.filter((_, index) => index % stride === 0).slice(0, 7);
+      }
+
+      return nextMilestones;
+    }
+
+    function showStatus(message, isError = false) {
+      timelineStatus.hidden = false;
+      timelineStatus.textContent = message;
+      timelineStatus.style.color = isError ? '#ffd0a9' : '';
+    }
+
+    function hideStatus() {
+      timelineStatus.hidden = true;
+      timelineStatus.textContent = '';
+    }
+
+    function renderSourceLink(url) {
+      pathText.textContent = '';
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Open Bluesky post';
+      pathText.appendChild(link);
+    }
+
+    let isTransitioning = false;
+
+    async function updateActiveUI() {
+      if (!photos.length) return;
+      const photo = photos[currentIndex];
+      const url = photo.src;//`${photo.src}?t=${Date.now()}`;
+
+      try {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        const oldFront = frontImage;
+        const newFront = backImage;
+
+        // Make sure incoming image starts hidden
+        newFront.classList.remove("active");
+        newFront.src = url;
+        newFront.alt = photo.alt || "";
+
+        await newFront.decode();
+
+        // Force browser to register the hidden state
+        void newFront.offsetWidth;
+
+        const onTransitionEnd = (event) => {
+          if (event.propertyName !== "opacity") return;
+
+          newFront.removeEventListener("transitionend", onTransitionEnd);
+
+          frontImage = newFront;
+          backImage = oldFront;
+          isTransitioning = false;
+        };
+
+        newFront.addEventListener("transitionend", onTransitionEnd);
+
+        requestAnimationFrame(() => {
+          newFront.classList.add("active");
+          oldFront.classList.remove("active");
+        });
+
+      } catch (e) {
+        console.log(e, `couldn't refresh ${url}`);
+        isTransitioning = false;
+      }
+
+      titleText.textContent = photo.title;
+      subtitleText.textContent = photo.era;
+      captionText.textContent = photo.caption;
+      renderSourceLink(photo.postUrl);
+      overlayEra.textContent = photo.era;
+      overlayCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+      if(photo.imageAlt)
+      {
+        lbsBox.removeAttribute('hidden', '');
+        lbsText.textContent = photo.imageAlt;
+      }
+      else
+        lbsBox.setAttribute('hidden', '');
+      if(photo.meta)
+      {
+        monesBox.removeAttribute('hidden', '');
+        monesText.textContent = photo.meta;
+      } else
+        monesBox.setAttribute('hidden', '');
+      trackFill.style.width = `${milestonePercent(photo.number)}%`;
+
+      document.querySelectorAll('.thumb-btn').forEach((el) => {
+        el.classList.toggle('active', Number(el.dataset.index) === currentIndex);
+      });
+
+      const nearest = closestMilestoneIndex(photo.number) - 1;
+      document.querySelectorAll('.milestone').forEach((el) => {
+        el.classList.toggle('active', Number(el.dataset.index) === nearest);
+      });
+    }
+
+    async function goTo(index) {
+      currentIndex = clampIndex(index);
+      await updateActiveUI();
+    }
+
+    async function next() {
+      if (!photos.length) return;
+      currentIndex = (currentIndex + 1) % photos.length;
+      await updateActiveUI();
+    }
+
+    async function prev() {
+      if (!photos.length) return;
+      currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+      await updateActiveUI();
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', next, { signal });
+    document.getElementById('prevBtn').addEventListener('click', prev, { signal });
+
+    document.addEventListener('keydown', async (event) => {
+      if (event.key === 'ArrowRight') await next();
+      if (event.key === 'ArrowLeft') await prev();
+    }, { signal });
+
+    const stage = document.getElementById('stage');
+    stage.addEventListener('touchstart', (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true, signal });
+
+    stage.addEventListener('touchend', async (event) => {
+      if (touchStartX == null) return;
+      const endX = event.changedTouches[0].clientX;
+      const delta = endX - touchStartX;
+      if (Math.abs(delta) > 45) {
+        if (delta < 0) await next();
+        else prev();
+      }
+      touchStartX = null;
+    }, { passive: true, signal });
+
+    (async () => {
+      try {
+        photos = await loadBlueskyPhotos();
+        if (signal.aborted) return;
+
+        if (!photos.length) {
+          titleText.textContent = 'No public image posts found';
+          subtitleText.textContent = `Nothing came back from @${CONFIG.handle}.`;
+          captionText.textContent = 'Public Bluesky image posts will appear here once the API returns them.';
+          showStatus('No public image posts were found in the scanned Bluesky feed.', true);
+          return;
+        }
+
+        milestones = buildMilestones(photos);
+        renderMilestones();
+        renderThumbs();
+        hideStatus();
+
+        // if (mediaHero && photos[0]?.src) {
+        //   mediaHero.style.setProperty('--hero-image', `linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.78)), url(${JSON.stringify(photos[0].src)})`);
+        // }
+
+        await updateActiveUI();
+      } catch (error) {
+        if (signal.aborted) return;
+        console.error('Could not load Bluesky media feed', error);
+        titleText.textContent = 'Bluesky media unavailable';
+        subtitleText.textContent = 'The public API request did not complete.';
+        captionText.textContent = 'Refresh the page later, or check the browser console for the exact API error.';
+        showStatus('Could not load the public Bluesky media feed.', true);
+      }
+    })();
+  </script>
+  <footer class="site-footer">
+    <p>You are now entering the uncanny valley. Population: Ellie.</p>
+  </footer>
+  <div class="page-transition" aria-hidden="true"></div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

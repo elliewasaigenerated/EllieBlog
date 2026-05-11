@@ -987,8 +987,8 @@ code {
   inset: -24px;
   z-index: 0;
   background-image:
-    var(--hero-image),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.76));
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.76)),
+    var(--hero-image);
   background-size: cover;
   background-position: var(--hero-position);
   background-repeat: no-repeat;
