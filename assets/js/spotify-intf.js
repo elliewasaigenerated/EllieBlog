@@ -1,10 +1,10 @@
 const PLAYER_CONFIG = {
   fallbackTrack: {
-    id: "3ACgRmJStyjPbGyOeirKrA",
-    title: "Dolori",
-    artists: "Of The Trees",
+    id: "1O4j7ICGNXujQUVxaM29uZ",
+    title: "Small Sanctuary (Nimino Remix)",
+    artists: "Tycho, nimino",
     status: "Using the site fallback track.",
-    url: "https://open.spotify.com/track/3ACgRmJStyjPbGyOeirKrA",
+    url: "https://open.spotify.com/track/1O4j7ICGNXujQUVxaM29uZ",
   },
 };
 
