@@ -1,10 +1,10 @@
 const PLAYER_CONFIG = {
   fallbackTrack: {
-    id: "1O4j7ICGNXujQUVxaM29uZ",
-    title: "Small Sanctuary (Nimino Remix)",
-    artists: "Tycho, nimino",
+    id: "7bDDYji600PxR0F921ctVN",
+    title: "Save a Soul",
+    artists: "nimino",
     status: "Using the site fallback track.",
-    url: "https://open.spotify.com/track/1O4j7ICGNXujQUVxaM29uZ",
+    url: "https://open.spotify.com/track/7bDDYji600PxR0F921ctVN",
   },
 };
 
