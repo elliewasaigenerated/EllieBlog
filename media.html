@@ -718,7 +718,8 @@
       maxPages: 4,
       maxImages: 80,
       feedTimeoutMs: 10000,
-      commentDateTimeoutMs: 6000
+      commentDateTimeoutMs: 6000,
+      excludedPostText: 'We all start somewhere'
     };
 
     const featuredImageA = document.getElementById('featuredImageA');
@@ -967,6 +968,10 @@
       return item?.post?.record?.text?.trim() || 'No post text provided.';
     }
 
+    function shouldExcludePost(text) {
+      return text.toLocaleLowerCase().includes(CONFIG.excludedPostText.toLocaleLowerCase());
+    }
+
     function collectEmbedImages(embed) {
       if (!embed) return [];
       if (Array.isArray(embed.images)) return embed.images;
@@ -1025,6 +1030,8 @@
           const createdAt = post.record?.createdAt || post.indexedAt || '';
           const text = getPostText(item);
           const postUrl = buildPostUrl(post);
+
+          if (shouldExcludePost(text)) return;
 
           images.forEach((image, imageIndex) => {
             if (nextPhotos.length >= CONFIG.maxImages) return;
