@@ -900,9 +900,9 @@ ${sourceScript.textContent}
     playEnterAnimation();
     loadAnalytics();
 
-    if (!hasSeenAnalyticsConsentThisSession()) {
+    if (!getStoredAnalyticsConsent() && !hasSeenAnalyticsConsentThisSession()) {
       openAnalyticsConsentDialog();
-    } else if (!hasSeenEmbedConsentThisSession()) {
+    } else if (!getStoredEmbedConsent() && !hasSeenEmbedConsentThisSession()) {
       openEmbedConsentDialog();
     }
 
