@@ -982,6 +982,7 @@
     function collectEmbedImages(embed) {
       if (!embed) return [];
       if (Array.isArray(embed.images)) return embed.images;
+      if (Array.isArray(embed.items)) return embed.items;
       if (embed.media) return collectEmbedImages(embed.media);
       return [];
     }
@@ -1052,8 +1053,8 @@
             nextPhotos.push({
               number,
               originalOrder: number,
-              src: image.fullsize || image.thumb,
-              thumb: image.thumb || image.fullsize,
+              src: image.fullsize || image.thumb || image.thumbnail,
+              thumb: image.thumb || image.thumbnail || image.fullsize,
               title: formatDate(createdAt),
               era: eraForYear(formatYear(createdAt)),
               caption: text.replace(/#blog-[^\s]*/g, ''),

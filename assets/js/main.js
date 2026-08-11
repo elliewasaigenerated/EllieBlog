@@ -18,7 +18,7 @@
     declined: "declined",
     dismissed: "dismissed",
   };
-  const ANALYTICS_CONSENT_SESSION_SEEN_KEY = "ellie_analytics_consent_seen_this_session";
+  const ANALYTICS_CONSENT_SESSION_SEEN_KEY = "ellie_analytics_consent_notice_seen_v2";
 
   const EMBED_CONSENT_KEY = "ellie_embed_consent";
   const EMBED_CONSENT_VALUES = {
@@ -26,7 +26,7 @@
     declined: "declined",
     dismissed: "dismissed",
   };
-  const EMBED_CONSENT_SESSION_SEEN_KEY = "ellie_embed_consent_seen_this_session";
+  const EMBED_CONSENT_SESSION_SEEN_KEY = "ellie_embed_consent_notice_seen_v2";
 
   function getStoredAnalyticsConsent() {
     try {
@@ -38,12 +38,6 @@
 
   function analyticsAllowed() {
     return getStoredAnalyticsConsent() === ANALYTICS_CONSENT_VALUES.accepted;
-  }
-
-  function needsAnalyticsConsentNotice() {
-    const state = getStoredAnalyticsConsent();
-    return state !== ANALYTICS_CONSENT_VALUES.accepted
-      && state !== ANALYTICS_CONSENT_VALUES.declined;
   }
 
   function setStoredAnalyticsConsent(value) {
@@ -203,12 +197,6 @@
 
   function embedsAllowed() {
     return getStoredEmbedConsent() === EMBED_CONSENT_VALUES.accepted;
-  }
-
-  function needsEmbedConsentNotice() {
-    const state = getStoredEmbedConsent();
-    return state !== EMBED_CONSENT_VALUES.accepted
-      && state !== EMBED_CONSENT_VALUES.declined;
   }
 
   function setStoredEmbedConsent(value) {
@@ -912,12 +900,11 @@ ${sourceScript.textContent}
     playEnterAnimation();
     loadAnalytics();
 
-    // A backdrop dismissal is not a choice. Remind visitors next session until
-    // they explicitly accept or decline, but never show the same notice twice
-    // during a single session.
-    if (needsAnalyticsConsentNotice() && !hasSeenAnalyticsConsentThisSession()) {
+    // Show each privacy notice once per browser session. The session marker
+    // prevents duplicate dialogs during in-site navigation.
+    if (!hasSeenAnalyticsConsentThisSession()) {
       openAnalyticsConsentDialog();
-    } else if (needsEmbedConsentNotice() && !hasSeenEmbedConsentThisSession()) {
+    } else if (!hasSeenEmbedConsentThisSession()) {
       openEmbedConsentDialog();
     }
 
