@@ -40,6 +40,12 @@
     return getStoredAnalyticsConsent() === ANALYTICS_CONSENT_VALUES.accepted;
   }
 
+  function needsAnalyticsConsentNotice() {
+    const state = getStoredAnalyticsConsent();
+    return state !== ANALYTICS_CONSENT_VALUES.accepted
+      && state !== ANALYTICS_CONSENT_VALUES.declined;
+  }
+
   function setStoredAnalyticsConsent(value) {
     try {
       if (!value) {
@@ -197,6 +203,12 @@
 
   function embedsAllowed() {
     return getStoredEmbedConsent() === EMBED_CONSENT_VALUES.accepted;
+  }
+
+  function needsEmbedConsentNotice() {
+    const state = getStoredEmbedConsent();
+    return state !== EMBED_CONSENT_VALUES.accepted
+      && state !== EMBED_CONSENT_VALUES.declined;
   }
 
   function setStoredEmbedConsent(value) {
@@ -900,9 +912,12 @@ ${sourceScript.textContent}
     playEnterAnimation();
     loadAnalytics();
 
-    if (!getStoredAnalyticsConsent() && !hasSeenAnalyticsConsentThisSession()) {
+    // A backdrop dismissal is not a choice. Remind visitors next session until
+    // they explicitly accept or decline, but never show the same notice twice
+    // during a single session.
+    if (needsAnalyticsConsentNotice() && !hasSeenAnalyticsConsentThisSession()) {
       openAnalyticsConsentDialog();
-    } else if (!getStoredEmbedConsent() && !hasSeenEmbedConsentThisSession()) {
+    } else if (needsEmbedConsentNotice() && !hasSeenEmbedConsentThisSession()) {
       openEmbedConsentDialog();
     }
 

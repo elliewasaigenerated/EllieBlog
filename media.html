@@ -719,7 +719,8 @@
       maxImages: 80,
       feedTimeoutMs: 10000,
       commentDateTimeoutMs: 6000,
-      excludedPostText: 'We all start somewhere'
+      excludedPostText: 'We all start somewhere',
+      excludedPostTags: ['#blog-exclude', '#blog-ignore']
     };
 
     const featuredImageA = document.getElementById('featuredImageA');
@@ -969,7 +970,13 @@
     }
 
     function shouldExcludePost(text) {
-      return text.toLocaleLowerCase().includes(CONFIG.excludedPostText.toLocaleLowerCase());
+      const postText = String(text || '');
+      const containsExcludedTag = CONFIG.excludedPostTags.some((tag) => (
+        new RegExp(`${tag}(?![\\w-])`, 'i').test(postText)
+      ));
+
+      return postText.toLocaleLowerCase().includes(CONFIG.excludedPostText.toLocaleLowerCase())
+        || containsExcludedTag;
     }
 
     function collectEmbedImages(embed) {
